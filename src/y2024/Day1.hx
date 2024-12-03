@@ -2,6 +2,8 @@ package y2024;
 
 import DayEngine.TestData;
 
+using Lambda;
+
 var testData = '3   4
 4   3
 2   5
@@ -13,7 +15,7 @@ var testData = '3   4
 class Day1 extends DayEngine {
     public static function make(data:String) {
         var tests:Array<TestData> = [
-            { data: testData, expected: [11, null] }
+            { data: testData, expected: [11, 31] }
         ];
 
         new Day1(data, tests);
@@ -44,6 +46,25 @@ class Day1 extends DayEngine {
     }
 
     function problem2(data:String):Dynamic {
-        return data.split("\n").length;
+        var firstList:Array<Int> = [];
+        var secondMap = new Map<Int, Int>();
+
+        for (line in data.split("\n")) {
+            var parts = line.split("   ");
+            if (parts.length != 2) {
+                continue;
+            }
+            var first = Std.parseInt(parts[0]);
+            var second = Std.parseInt(parts[1]);
+
+            firstList.push(first);
+            if (secondMap[second] == null) {
+                secondMap[second] = 1;
+            } else {
+                secondMap[second]++;
+            }
+        }
+
+        return firstList.map((first) -> first * (secondMap[first] ?? 0)).fold((a, b) -> a + b, 0);
     }
 }
