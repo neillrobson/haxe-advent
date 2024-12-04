@@ -1,3 +1,5 @@
+import haxe.io.Path;
+import haxe.macro.Expr;
 import sys.FileSystem;
 import sys.io.File;
 
@@ -15,11 +17,29 @@ class Main {
         var today = Date.now();
         this.day = day == null ? today.getDate() : day;
 
-        var funcMap:Array<AdventMakeFunc> = [
-            y2024.Day1.make
-        ];
+        var funcMap:Array<AdventMakeFunc> = getFuncMap();
 
         funcMap[this.day - 1](getInput());
+    }
+
+    static macro function getFuncMap() {
+        var srcPath = "./src/y2024";
+        var days:Array<String> = [];
+
+        for (dayFile in FileSystem.readDirectory(srcPath)) {
+            var dayPath = Path.join([srcPath, dayFile]);
+            var dayPattern = ~/^(Day\d{1,2})\.hx$/;
+            if (!FileSystem.isDirectory(dayPath) && dayPattern.match(dayFile)) {
+                days.push(dayPattern.matched(1));
+            }
+        }
+
+        var ret:Array<Expr> = [];
+        for (day in days) {
+            ret.push(macro y2024.$day.make);
+        }
+
+        return macro $a{ret};
     }
 
     function getInput():String {
