@@ -10,7 +10,7 @@ class Main {
     var day:Int;
 
     static function main() {
-        new Main(1);
+        new Main(2);
     }
 
     public function new(?day:Int) {
@@ -34,6 +34,7 @@ class Main {
             }
         }
 
+        days.sort((a, b) -> a < b ? -1 : 1);
         var ret:Array<Expr> = [];
         for (day in days) {
             ret.push(macro y2024.$day.make);
