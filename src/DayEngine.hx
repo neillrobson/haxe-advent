@@ -9,7 +9,7 @@ abstract class DayEngine {
     abstract function problem1(data:String):Dynamic;
     abstract function problem2(data:String):Dynamic;
 
-    public function new(data:String, ?tests:Array<TestData>) {
+    public function new(data:String, ?tests:Array<TestData>, run = true) {
         for (x => problem in [problem1, problem2]) {
             Timer.measure(() -> {
                 Sys.print('Problem ${x + 1}: ');
@@ -33,9 +33,10 @@ abstract class DayEngine {
 
                 Sys.println("");
 
-                var result = problem(data);
-
-                Sys.println(result == null ? "No result" : result);
+                if (run) {
+                    var result = problem(data);
+                    Sys.println(result == null ? "No result" : result);
+                }
             });
         }
     }
