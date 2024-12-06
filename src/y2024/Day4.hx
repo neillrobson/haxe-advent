@@ -20,7 +20,7 @@ MXMXAXMASX
 class Day4 extends DayEngine {
     public static function make(data:String) {
         var tests:Array<TestData> = [
-            { data: testData, expected: [18, null] }
+            { data: testData, expected: [18, 9] }
         ];
 
         new Day4(data, tests);
@@ -39,8 +39,41 @@ class Day4 extends DayEngine {
     }
 
     function problem2(data:String):Dynamic {
-        return null;
+        var matrix = data.split('\n').filter((line) -> line.length > 0);
+        var count = 0;
+
+        for (y in 1...matrix.length - 1) {
+            for (x in 1...matrix[0].length - 1) {
+                if (
+                    checkXMAS(
+                        matrix[y].charAt(x),
+                        matrix[y-1].charAt(x-1),
+                        matrix[y-1].charAt(x+1),
+                        matrix[y+1].charAt(x-1),
+                        matrix[y+1].charAt(x+1)
+                    )
+                ) count++;
+            }
+        }
+
+        return count;
     }
+}
+
+function checkXMAS(c:String, tl:String, tr:String, bl:String, br:String) {
+    if (c != "A") return false;
+
+    if (!"MS".contains(tl)) return false;
+    if (!"MS".contains(tr)) return false;
+    if (!"MS".contains(bl)) return false;
+    if (!"MS".contains(br)) return false;
+
+    if (tl != tr && tl != bl) return false;
+    if (br != tr && br != bl) return false;
+
+    if (tl == br) return false;
+
+    return true;
 }
 
 class StringMatrix {
