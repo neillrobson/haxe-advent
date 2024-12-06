@@ -23,7 +23,7 @@ class Day4 extends DayEngine {
             { data: testData, expected: [18, null] }
         ];
 
-        new Day4(data, tests, false);
+        new Day4(data, tests);
     }
 
     function problem1(data:String):Dynamic {
@@ -34,8 +34,6 @@ class Day4 extends DayEngine {
         count += matrix.checkVertical('XMAS');
         count += matrix.checkLeadingDiagonal('XMAS');
         count += matrix.checkCounterDiagonal('XMAS');
-
-        Sys.println(count);
 
         return count;
     }
@@ -73,12 +71,12 @@ class StringMatrix {
 
     public function checkLeadingDiagonal(search:String) {
         var diags:Array<String> = [];
-        var diagCount = data.length + data[0].length;
+        var diagCount = data.length + data[0].length - 1;
 
         for (i in 0...diagCount) {
             var line = new StringBuf();
 
-            var startRow = Std.int(Math.max(0, i - data[0].length));
+            var startRow = Std.int(Math.max(0, i - data[0].length + 1));
             var endRow = Std.int(Math.min(i + 1, data.length));
 
             var offset = Std.int(Math.max(data[0].length - i - 1, 0));
@@ -94,7 +92,34 @@ class StringMatrix {
     }
 
     public function checkCounterDiagonal(search:String) {
-        return 0;
+        var diags:Array<String> = [];
+        var diagCount = data.length + data[0].length - 1;
+
+        for (i in 0...diagCount) {
+            var line = new StringBuf();
+
+            // Going in a negative order
+            var startRow = Std.int(Math.min(i, data.length - 1));
+            var endRow = Std.int(Math.max(-1, i - data[0].length));
+
+            /**
+                dl - (diagCount - i)
+                dl - (dl + d0l - i)
+                dl - dl - d0l + i
+                -d0l + i
+                i - d0l
+            **/
+
+            var offset = Std.int(Math.max(i - data.length + 1, 0));
+            var rows = [for (j in -startRow...-endRow) data[-j]];
+
+            for (idx => row in rows)
+                line.addChar(row.fastCodeAt(offset + idx));
+
+            diags.push(line.toString());
+        }
+
+        return findMatches(search, diags);
     }
 }
 
