@@ -10,7 +10,8 @@ class Day3 extends DayEngine {
     public static function make(data:String) {
         var tests:Array<TestData> = [
             { data: testData, expected: [161, null] },
-            { data: "mul(2,4),mul(5,5),mul(11,8),mul(8,5)", expected: [161, null] }
+            { data: "mul(2,4),mul(5,5),mul(11,8),mul(8,5)", expected: [161, null] },
+            { data: "mumul(2,4),mul(5,5),mul(11,8),mul(8,5)", expected: [161, null] },
         ];
 
         new Day3(data, tests);
@@ -24,7 +25,11 @@ class Day3 extends DayEngine {
         // waiting for m u l ( 0-9+ , 0-9+ ) [end]
         for (i in 0...9) {
             var row = [];
-            for (_ in 0...charArr.length) row.push(i == 8 ? [0, 3] : [0, 0]);
+            for (j in 0...charArr.length) {
+                if (j == 1) row.push([1, 1]);
+                else if (i == 8) row.push([0, 3]);
+                else row.push([0, 0]);
+            }
             states.push(row);
         }
 
