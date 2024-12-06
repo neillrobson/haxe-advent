@@ -10,7 +10,12 @@ class Main {
     var day:Int;
 
     static function main() {
-        new Main(2);
+        var args = Sys.args();
+        if (args.length > 0) {
+            new Main(Std.parseInt(args[0]));
+        } else {
+            new Main();
+        }
     }
 
     public function new(?day:Int) {
