@@ -13,7 +13,7 @@ class Day3 extends DayEngine {
             { data: "mul(2,4),mul(5,5),mul(11,8),mul(8,5)", expected: [161, null] }
         ];
 
-        new Day3(data, tests, false);
+        new Day3(data, tests);
     }
 
     function problem1(data:String):Dynamic {
@@ -87,45 +87,39 @@ class FSM {
     }
 
     public function run(data:String):Array<String> {
-        // Input pointer
-        var i = 0;
         // Word pointer
         var j = -1;
         // Row pointer
         var r = 0;
 
-        return next(data, i, j, r, []);
-    }
+        var out = [];
 
-    function next(data:String, i:Int, j:Int, r:Int, out:Array<String>) {
-        if (i >= data.length) {
-            if (j >= 0) {
-                out.push(data.substring(j, i));
+        for (i in 0...data.length) {
+            var c = charMap[data.charAt(i)];
+            if (c == null) c = 0;
+
+            var state = states[r][c];
+            r = state[0];
+            var action = state[1];
+
+            switch (action) {
+                case 1:
+                    j = i;
+                case 2:
+                    out.push(data.substring(j, i));
+                    j = i;
+                case 3:
+                    out.push(data.substring(j, i));
+                    j = -1;
+                case 6:
+                    return out;
             }
-
-            return out;
         }
 
-        var c = charMap[data.charAt(i)];
-        if (c == null) c = 0;
-
-        var state = states[r][c];
-        var newRow = state[0];
-        var action = state[1];
-
-        switch (action) {
-            case 1:
-                j = i;
-            case 2:
-                out.push(data.substring(j, i));
-                j = i;
-            case 3:
-                out.push(data.substring(j, i));
-                j = -1;
-            case 6:
-                return out;
+        if (j >= 0) {
+            out.push(data.substring(j));
         }
 
-        return next(data, i + 1, j, newRow, out);
+        return out;
     }
 }

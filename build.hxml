@@ -1,2 +1,3 @@
 --class-path src
+-D analyzer-optimize
 --run Main
