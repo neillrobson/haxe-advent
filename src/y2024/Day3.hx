@@ -6,10 +6,23 @@ using Lambda;
 
 var testData = 'xmul(2,4)%&mul[3,7]!@^do_not_mul(5,5)+mul(32,64]then(mul(11,8)mul(8,5))';
 
+function postProcess(data:Array<String>):Int {
+    var mulRegex = ~/mul\((\d+),(\d+)\)/;
+
+    return data.fold((item, result) -> {
+        if (!mulRegex.match(item)) return result;
+
+        var a = Std.parseInt(mulRegex.matched(1));
+        var b = Std.parseInt(mulRegex.matched(2));
+
+        return result + a * b;
+    }, 0);
+}
+
 class Day3 extends DayEngine {
     public static function make(data:String) {
         var tests:Array<TestData> = [
-            { data: testData, expected: [161, null] },
+            { data: testData, expected: [161, 48] },
             { data: "mul(2,4),mul(5,5),mul(11,8),mul(8,5)", expected: [161, null] },
             { data: "mumul(2,4),mul(5,5),mul(11,8),mul(8,5)", expected: [161, null] },
         ];
@@ -46,19 +59,9 @@ class Day3 extends DayEngine {
         states[8][1] = [1, 2]; // received another "m"
 
         var fsm = new FSM(states, charArr);
-
         var res = fsm.run(data);
 
-        var mulRegex = ~/mul\((\d+),(\d+)\)/;
-
-        return res.fold((item, result) -> {
-            if (!mulRegex.match(item)) return result;
-
-            var a = Std.parseInt(mulRegex.matched(1));
-            var b = Std.parseInt(mulRegex.matched(2));
-
-            return result + a * b;
-        }, 0);
+        return postProcess(res);
     }
 
     function problem2(data:String):Dynamic {
