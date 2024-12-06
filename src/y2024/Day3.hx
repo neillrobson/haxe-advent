@@ -8,7 +8,11 @@ var testData = 'xmul(2,4)%&mul[3,7]!@^do_not_mul(5,5)+mul(32,64]then(mul(11,8)mu
 
 class Day3 extends DayEngine {
     public static function make(data:String) {
-        var tests:Array<TestData> = [{ data: testData, expected: [161, null] }];
+        var tests:Array<TestData> = [
+            { data: testData, expected: [161, null] },
+            { data: "mul(2,4),mul(5,5),mul(11,8),mul(8,5)", expected: [161, null] }
+        ];
+
         new Day3(data, tests, false);
     }
 
@@ -39,9 +43,17 @@ class Day3 extends DayEngine {
         var fsm = new FSM(states, charArr);
 
         var res = fsm.run(data);
-        Sys.println(res);
 
-        return res;
+        var mulRegex = ~/mul\((\d+),(\d+)\)/;
+
+        return res.fold((item, result) -> {
+            if (!mulRegex.match(item)) return result;
+
+            var a = Std.parseInt(mulRegex.matched(1));
+            var b = Std.parseInt(mulRegex.matched(2));
+
+            return result + a * b;
+        }, 0);
     }
 
     function problem2(data:String):Dynamic {
@@ -86,7 +98,13 @@ class FSM {
     }
 
     function next(data:String, i:Int, j:Int, r:Int, out:Array<String>) {
-        if (i >= data.length) return out;
+        if (i >= data.length) {
+            if (j >= 0) {
+                out.push(data.substring(j, i));
+            }
+
+            return out;
+        }
 
         var c = charMap[data.charAt(i)];
         if (c == null) c = 0;
