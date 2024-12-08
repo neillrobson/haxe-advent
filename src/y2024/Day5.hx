@@ -4,6 +4,8 @@ import DayEngine.TestData;
 
 using Lambda;
 
+typedef Lookup = Array<Array<Bool>>;
+
 var testData = '47|53
 97|13
 97|61
@@ -34,10 +36,16 @@ var testData = '47|53
 97,13,75,29,47
 ';
 
+var td2 = "2|4
+4|5
+
+1,4,3,5,2,8,9";
+
 class Day5 extends DayEngine {
     public static function make(data:String) {
         var tests:Array<TestData> = [
-            { data: testData, expected: [143, null] }
+            { data: testData, expected: [143, 123] },
+            { data: td2, expected: [0, 4]}
         ];
 
         new Day5(data, tests);
@@ -58,16 +66,26 @@ class Day5 extends DayEngine {
     }
 
     function problem2(data:String):Dynamic {
-        return null;
+        var newlines = ~/\n\s*\n/g;
+        var inputParts = newlines.split(data);
+        var lookup = buildLookup(inputParts[0]);
+        var lines = inputParts[1]
+            .split("\n")
+            .filter((line) -> line.length > 0)
+            .map((line) -> {
+                return line.split(",").map((i) -> Std.parseInt(i) ?? 0);
+            });
+
+        return lines.fold((line, sum) -> sum + fixLine(line, lookup), 0);
     }
 }
 
 /**
  * 100x100 array. Row is the earlier page; column is the later page (true if entry exists)
  * @param data
- * @return Array<Array<Bool>>
+ * @return Lookup
  */
-function buildLookup(data:String):Array<Array<Bool>> {
+function buildLookup(data:String):Lookup {
     var ret = [for (_ in 0...100) [for (_ in 0...100) false]];
 
     for (pair in data.split("\n")) {
@@ -81,7 +99,7 @@ function buildLookup(data:String):Array<Array<Bool>> {
     return ret;
 }
 
-function checkLine(line:Array<Int>, lookup:Array<Array<Bool>>):Int {
+function checkLine(line:Array<Int>, lookup:Lookup):Int {
     var prev:Array<Int> = [];
 
     for (i in line) {
@@ -92,4 +110,41 @@ function checkLine(line:Array<Int>, lookup:Array<Array<Bool>>):Int {
     }
 
     return line[Std.int(line.length / 2)];
+}
+
+function fixLine(line:Array<Int>, lookup:Lookup):Int {
+    var hasChange = false;
+
+    for (i => n in line) {
+        for (j in 0...i) {
+            var p = line[j];
+
+            if (lookup[n][p]) {
+                hasChange = true;
+
+                line[j] = n;
+                line[i] = p;
+
+                subcheck(line, lookup, j, i);
+
+                n = p;
+            }
+        }
+    }
+
+    return hasChange ? line[Std.int(line.length / 2)] : 0;
+}
+
+function subcheck(line:Array<Int>, lookup:Lookup, s:Int, e:Int):Void {
+    var p = line[s];
+
+    for (i in s+1...e) {
+        var n = line[i];
+        if (lookup[n][p]) {
+            line[s] = n;
+            line[i] = p;
+            subcheck(line, lookup, s, i);
+            s = i;
+        }
+    }
 }
