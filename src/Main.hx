@@ -1,7 +1,11 @@
+import haxe.Exception;
 import haxe.io.Path;
 import haxe.macro.Expr;
 import sys.FileSystem;
+import sys.Http;
 import sys.io.File;
+
+using tink.CoreApi;
 
 typedef AdventMakeFunc = String -> Void;
 
@@ -24,7 +28,7 @@ class Main {
 
         var funcMap:Array<AdventMakeFunc> = getFuncMap();
 
-        funcMap[this.day - 1](getInput());
+        getInput().handle(funcMap[this.day - 1]);
     }
 
     static macro function getFuncMap() {
@@ -48,7 +52,7 @@ class Main {
         return macro $a{ret};
     }
 
-    function getInput():String {
+    function getInput():Future<String> {
         if (!FileSystem.exists("./cache")) {
             FileSystem.createDirectory("./cache");
         }
@@ -60,9 +64,23 @@ class Main {
 
         var cacheFile = '$cachePath/$day.txt';
         if (FileSystem.exists(cacheFile)) {
-            return File.getContent(cacheFile);
+            return Future.sync(File.getContent(cacheFile));
         }
 
-        return "";
+        var USERAGENT = File.getContent("./secrets/useragent");
+        var COOKIE = File.getContent("./secrets/session");
+
+        return Future.irreversible(f -> {
+            Sys.println('Retrieving data from server (2024 day $day)');
+            var h = new Http('https://adventofcode.com/2024/day/$day/input');
+            h.addHeader("User-Agent", USERAGENT);
+            h.addHeader("Cookie", 'session=$COOKIE');
+            h.onData = d -> {
+                File.saveContent(cacheFile, d);
+                f(d);
+            }
+            h.onError = e -> throw new Exception('HTTP error: $e');
+            h.request();
+        });
     }
 }
