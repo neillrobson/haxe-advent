@@ -2,6 +2,8 @@ package y2024;
 
 import DayEngine.TestData;
 
+using Lambda;
+
 var testData = '47|53
 97|13
 97|61
@@ -42,10 +44,52 @@ class Day5 extends DayEngine {
     }
 
     function problem1(data:String):Dynamic {
-        return null;
+        var newlines = ~/\n\s*\n/g;
+        var inputParts = newlines.split(data);
+        var lookup = buildLookup(inputParts[0]);
+        var lines = inputParts[1]
+            .split("\n")
+            .filter((line) -> line.length > 0)
+            .map((line) -> {
+                return line.split(",").map((i) -> Std.parseInt(i) ?? 0);
+            });
+
+        return lines.fold((line, sum) -> sum + checkLine(line, lookup), 0);
     }
 
     function problem2(data:String):Dynamic {
         return null;
     }
+}
+
+/**
+ * 100x100 array. Row is the earlier page; column is the later page (true if entry exists)
+ * @param data
+ * @return Array<Array<Bool>>
+ */
+function buildLookup(data:String):Array<Array<Bool>> {
+    var ret = [for (_ in 0...100) [for (_ in 0...100) false]];
+
+    for (pair in data.split("\n")) {
+        if (pair.length == 0) continue;
+
+        var nums = pair.split("|").map((n) -> Std.parseInt(n) ?? 0);
+
+        ret[nums[0]][nums[1]] = true;
+    }
+
+    return ret;
+}
+
+function checkLine(line:Array<Int>, lookup:Array<Array<Bool>>):Int {
+    var prev:Array<Int> = [];
+
+    for (i in line) {
+        for (p in prev) {
+            if (lookup[i][p]) return 0;
+        }
+        prev.push(i);
+    }
+
+    return line[Std.int(line.length / 2)];
 }
