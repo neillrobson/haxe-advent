@@ -41,7 +41,7 @@ class Day6 extends DayEngine {
     public static function make(data:String) {
         var tests:Array<TestData> = [
             { data: testData, expected: [41, 6] },
-            { data: test2, expected: [null, 9] },
+            { data: test2, expected: [null, 6] },
         ];
 
         new Day6(data, tests, true);
@@ -150,11 +150,15 @@ class Day6 extends DayEngine {
                 if (c == "^") {
                     x = j;
                     y = i;
+                    lineArr[j] = 1;
                 }
             }
 
             map.push(lineArr);
         }
+
+        var blocks:Array<Array<Int>> = [for (i in 0...map.length) map[i].copy()];
+        blocks[y][x] = 0;
 
         if (x < 0 || y < 0) {
             Sys.println("Initial location not found");
@@ -174,10 +178,10 @@ class Day6 extends DayEngine {
                         dir = Dir.RIGHT;
                     else {
                         if (checkLoop(map, dir, y, x)) {
-                            if (map[newY][x] < 1) count++;
-                            map[newY][x] += 1;
+                            if (blocks[newY][x]++ < 1) count++;
                         }
                         y = newY;
+                        map[y][x] |= 1;
                     }
                 case Dir.RIGHT:
                     var newX = x + 1;
@@ -187,10 +191,10 @@ class Day6 extends DayEngine {
                         dir = Dir.DOWN;
                     else {
                         if (checkLoop(map, dir, y, x)) {
-                            if (map[y][newX] < 1) count++;
-                            map[y][newX] += 1;
+                            if (blocks[y][newX]++ < 1) count++;
                         }
                         x = newX;
+                        map[y][x] |= 2;
                     }
                 case Dir.DOWN:
                     var newY = y + 1;
@@ -200,10 +204,10 @@ class Day6 extends DayEngine {
                         dir = Dir.LEFT;
                     else {
                         if (checkLoop(map, dir, y, x)) {
-                            if (map[newY][x] < 1) count++;
-                            map[newY][x] += 1;
+                            if (blocks[newY][x]++ < 1) count++;
                         }
                         y = newY;
+                        map[y][x] |= 4;
                     }
                 case Dir.LEFT:
                     var newX = x - 1;
@@ -213,22 +217,12 @@ class Day6 extends DayEngine {
                         dir = Dir.UP;
                     else {
                         if (checkLoop(map, dir, y, x)) {
-                            if (map[y][newX] < 1) count++;
-                            map[y][newX] += 1;
+                            if (blocks[y][newX]++ < 1) count++;
                         }
                         x = newX;
+                        map[y][x] |= 8;
                     }
             }
-        }
-
-        Sys.println('');
-        for (line in map) {
-            for (i in line) {
-                if (i < 0) Sys.print('#');
-                else if (i == 0) Sys.print('_');
-                else Sys.print(i);
-            }
-            Sys.println('');
         }
 
         return count;
@@ -236,7 +230,7 @@ class Day6 extends DayEngine {
 }
 
 function checkLoop(map:Array<Array<Int>>, dir:Dir, y:Int, x:Int):Bool {
-    var dirs:Array<Array<Int>> = [for (_ in 0...map.length) [for (_ in 0...map[0].length) 0]];
+    var dirs:Array<Array<Int>> = [for (i in 0...map.length) map[i].copy()];
 
     var bx = x;
     var by = y;
@@ -254,6 +248,9 @@ function checkLoop(map:Array<Array<Int>>, dir:Dir, y:Int, x:Int):Bool {
             bx--;
             dirs[y][x] |= 8;
     }
+
+    // We can't put a barrier here because the guard's path previously went through here
+    if (dirs[by][bx] != 0) return false;
 
     while (true) {
         switch (dir) {
