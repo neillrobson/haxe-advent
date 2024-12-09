@@ -160,7 +160,7 @@ class Day6 extends DayEngine {
                         dir = Dir.RIGHT;
                     else {
                         y = newY;
-                        if (checkLoop(map, dir, y, x)) Sys.println(count++);
+                        if (checkLoop(map, dir, y, x)) count++;
                     }
                 case Dir.RIGHT:
                     var newX = x + 1;
@@ -170,7 +170,7 @@ class Day6 extends DayEngine {
                         dir = Dir.DOWN;
                     else {
                         x = newX;
-                        if (checkLoop(map, dir, y, x)) Sys.println(count++);
+                        if (checkLoop(map, dir, y, x)) count++;
                     }
                 case Dir.DOWN:
                     var newY = y + 1;
@@ -180,7 +180,7 @@ class Day6 extends DayEngine {
                         dir = Dir.LEFT;
                     else {
                         y = newY;
-                        if (checkLoop(map, dir, y, x)) Sys.println(count++);
+                        if (checkLoop(map, dir, y, x)) count++;
                     }
                 case Dir.LEFT:
                     var newX = x - 1;
@@ -190,7 +190,7 @@ class Day6 extends DayEngine {
                         dir = Dir.UP;
                     else {
                         x = newX;
-                        if (checkLoop(map, dir, y, x)) Sys.println(count++);
+                        if (checkLoop(map, dir, y, x)) count++;
                     }
             }
         }
@@ -199,23 +199,25 @@ class Day6 extends DayEngine {
     }
 }
 
-function checkLoop(map:Array<Array<Int>>, iDir:Dir, iy:Int, ix:Int):Bool {
-    var bx = ix;
-    var by = iy;
-    switch (iDir) {
+function checkLoop(map:Array<Array<Int>>, dir:Dir, y:Int, x:Int):Bool {
+    var dirs:Array<Array<Int>> = [for (_ in 0...map.length) [for (_ in 0...map[0].length) 0]];
+
+    var bx = x;
+    var by = y;
+    switch (dir) {
         case Dir.UP:
             by--;
+            dirs[y][x] |= 1;
         case Dir.RIGHT:
             bx++;
+            dirs[y][x] |= 2;
         case Dir.DOWN:
             by++;
+            dirs[y][x] |= 4;
         case Dir.LEFT:
             bx--;
+            dirs[y][x] |= 8;
     }
-
-    var x = ix;
-    var y = iy;
-    var dir = iDir;
 
     while (true) {
         switch (dir) {
@@ -227,7 +229,8 @@ function checkLoop(map:Array<Array<Int>>, iDir:Dir, iy:Int, ix:Int):Bool {
                     dir = Dir.RIGHT;
                 else {
                     y = newY;
-                    if (y == iy && x == ix && dir == iDir) return true;
+                    if (dirs[y][x] & 1 > 0) return true;
+                    dirs[y][x] |= 1;
                 }
             case Dir.RIGHT:
                 var newX = x + 1;
@@ -237,7 +240,8 @@ function checkLoop(map:Array<Array<Int>>, iDir:Dir, iy:Int, ix:Int):Bool {
                     dir = Dir.DOWN;
                 else {
                     x = newX;
-                    if (y == iy && x == ix && dir == iDir) return true;
+                    if (dirs[y][x] & 2 > 0) return true;
+                    dirs[y][x] |= 2;
                 }
             case Dir.DOWN:
                 var newY = y + 1;
@@ -247,7 +251,8 @@ function checkLoop(map:Array<Array<Int>>, iDir:Dir, iy:Int, ix:Int):Bool {
                     dir = Dir.LEFT;
                 else {
                     y = newY;
-                    if (y == iy && x == ix && dir == iDir) return true;
+                    if (dirs[y][x] & 4 > 0) return true;
+                    dirs[y][x] |= 4;
                 }
             case Dir.LEFT:
                 var newX = x - 1;
@@ -257,7 +262,8 @@ function checkLoop(map:Array<Array<Int>>, iDir:Dir, iy:Int, ix:Int):Bool {
                     dir = Dir.UP;
                 else {
                     x = newX;
-                    if (y == iy && x == ix && dir == iDir) return true;
+                    if (dirs[y][x] & 8 > 0) return true;
+                    dirs[y][x] |= 8;
                 }
         }
     }
