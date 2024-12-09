@@ -4,6 +4,8 @@ import DayEngine.TestData;
 
 using StringTools;
 
+// too high: 1877, 1798
+
 var testData = "....#.....
 .........#
 ..........
@@ -16,6 +18,18 @@ var testData = "....#.....
 ......#...
 ";
 
+var test2 = "
+.......#.......
+.#..........#..
+........#...#..
+#.............#
+.......^...#...
+.....#.......#.
+.......#.......
+....#..........
+......#........
+";
+
 enum Dir {
     UP;
     RIGHT;
@@ -26,10 +40,11 @@ enum Dir {
 class Day6 extends DayEngine {
     public static function make(data:String) {
         var tests:Array<TestData> = [
-            { data: testData, expected: [41, 6] }
+            { data: testData, expected: [41, 6] },
+            { data: test2, expected: [null, 9] },
         ];
 
-        new Day6(data, tests);
+        new Day6(data, tests, true);
     }
 
     function problem1(data:String):Dynamic {
@@ -135,7 +150,6 @@ class Day6 extends DayEngine {
                 if (c == "^") {
                     x = j;
                     y = i;
-                    lineArr[j] = 1;
                 }
             }
 
@@ -159,8 +173,11 @@ class Day6 extends DayEngine {
                     if (map[newY][x] < 0)
                         dir = Dir.RIGHT;
                     else {
+                        if (checkLoop(map, dir, y, x)) {
+                            if (map[newY][x] < 1) count++;
+                            map[newY][x] += 1;
+                        }
                         y = newY;
-                        if (checkLoop(map, dir, y, x)) count++;
                     }
                 case Dir.RIGHT:
                     var newX = x + 1;
@@ -169,8 +186,11 @@ class Day6 extends DayEngine {
                     if (map[y][newX] < 0)
                         dir = Dir.DOWN;
                     else {
+                        if (checkLoop(map, dir, y, x)) {
+                            if (map[y][newX] < 1) count++;
+                            map[y][newX] += 1;
+                        }
                         x = newX;
-                        if (checkLoop(map, dir, y, x)) count++;
                     }
                 case Dir.DOWN:
                     var newY = y + 1;
@@ -179,8 +199,11 @@ class Day6 extends DayEngine {
                     if (map[newY][x] < 0)
                         dir = Dir.LEFT;
                     else {
+                        if (checkLoop(map, dir, y, x)) {
+                            if (map[newY][x] < 1) count++;
+                            map[newY][x] += 1;
+                        }
                         y = newY;
-                        if (checkLoop(map, dir, y, x)) count++;
                     }
                 case Dir.LEFT:
                     var newX = x - 1;
@@ -189,10 +212,23 @@ class Day6 extends DayEngine {
                     if (map[y][newX] < 0)
                         dir = Dir.UP;
                     else {
+                        if (checkLoop(map, dir, y, x)) {
+                            if (map[y][newX] < 1) count++;
+                            map[y][newX] += 1;
+                        }
                         x = newX;
-                        if (checkLoop(map, dir, y, x)) count++;
                     }
             }
+        }
+
+        Sys.println('');
+        for (line in map) {
+            for (i in line) {
+                if (i < 0) Sys.print('#');
+                else if (i == 0) Sys.print('_');
+                else Sys.print(i);
+            }
+            Sys.println('');
         }
 
         return count;
