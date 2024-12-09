@@ -26,7 +26,7 @@ enum Dir {
 class Day6 extends DayEngine {
     public static function make(data:String) {
         var tests:Array<TestData> = [
-            { data: testData, expected: [41, null] }
+            { data: testData, expected: [41, 6] }
         ];
 
         new Day6(data, tests);
@@ -122,6 +122,79 @@ class Day6 extends DayEngine {
     }
 
     function problem2(data:String):Dynamic {
-        return null;
+        var lines = data.split('\n').map(s -> s.trim()).filter(s -> s.length != 0);
+        var map:Array<Array<Int>> = [];
+        var x:Int = -1, y:Int = -1;
+
+        for (i => line in lines) {
+            var lineArr = [];
+
+            for (j in 0...line.length) {
+                var c = line.charAt(j);
+                lineArr.push(c == "#" ? -1 : 0);
+                if (c == "^") {
+                    x = j;
+                    y = i;
+                    lineArr[j] = 1;
+                }
+            }
+
+            map.push(lineArr);
+        }
+
+        if (x < 0 || y < 0) {
+            Sys.println("Initial location not found");
+            return null;
+        }
+
+        var count = 0;
+        var dir = Dir.UP; // 1, 2, 4, 8: up, right, down, left
+
+        while (true) {
+            switch (dir) {
+                case Dir.UP:
+                    var newY = y - 1;
+                    if (newY < 0 || newY >= map.length)
+                        break;
+                    if (map[newY][x] < 0)
+                        dir = Dir.RIGHT;
+                    else {
+                        y = newY;
+                        map[y][x] |= 1;
+                    }
+                case Dir.RIGHT:
+                    var newX = x + 1;
+                    if (newX < 0 || newX >= map[0].length)
+                        break;
+                    if (map[y][newX] < 0)
+                        dir = Dir.DOWN;
+                    else {
+                        x = newX;
+                        map[y][x] |= 2;
+                    }
+                case Dir.DOWN:
+                    var newY = y + 1;
+                    if (newY < 0 || newY >= map.length)
+                        break;
+                    if (map[newY][x] < 0)
+                        dir = Dir.LEFT;
+                    else {
+                        y = newY;
+                        map[y][x] |= 4;
+                    }
+                case Dir.LEFT:
+                    var newX = x - 1;
+                    if (newX < 0 || newX >= map[0].length)
+                        break;
+                    if (map[y][newX] < 0)
+                        dir = Dir.UP;
+                    else {
+                        x = newX;
+                        map[y][x] |= 8;
+                    }
+            }
+        }
+
+        return count;
     }
 }
