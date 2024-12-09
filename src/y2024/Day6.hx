@@ -148,7 +148,7 @@ class Day6 extends DayEngine {
         }
 
         var count = 0;
-        var dir = Dir.UP; // 1, 2, 4, 8: up, right, down, left
+        var dir = Dir.UP;
 
         while (true) {
             switch (dir) {
@@ -160,7 +160,7 @@ class Day6 extends DayEngine {
                         dir = Dir.RIGHT;
                     else {
                         y = newY;
-                        map[y][x] |= 1;
+                        if (checkLoop(map, dir, y, x)) Sys.println(count++);
                     }
                 case Dir.RIGHT:
                     var newX = x + 1;
@@ -170,7 +170,7 @@ class Day6 extends DayEngine {
                         dir = Dir.DOWN;
                     else {
                         x = newX;
-                        map[y][x] |= 2;
+                        if (checkLoop(map, dir, y, x)) Sys.println(count++);
                     }
                 case Dir.DOWN:
                     var newY = y + 1;
@@ -180,7 +180,7 @@ class Day6 extends DayEngine {
                         dir = Dir.LEFT;
                     else {
                         y = newY;
-                        map[y][x] |= 4;
+                        if (checkLoop(map, dir, y, x)) Sys.println(count++);
                     }
                 case Dir.LEFT:
                     var newX = x - 1;
@@ -190,11 +190,77 @@ class Day6 extends DayEngine {
                         dir = Dir.UP;
                     else {
                         x = newX;
-                        map[y][x] |= 8;
+                        if (checkLoop(map, dir, y, x)) Sys.println(count++);
                     }
             }
         }
 
         return count;
     }
+}
+
+function checkLoop(map:Array<Array<Int>>, iDir:Dir, iy:Int, ix:Int):Bool {
+    var bx = ix;
+    var by = iy;
+    switch (iDir) {
+        case Dir.UP:
+            by--;
+        case Dir.RIGHT:
+            bx++;
+        case Dir.DOWN:
+            by++;
+        case Dir.LEFT:
+            bx--;
+    }
+
+    var x = ix;
+    var y = iy;
+    var dir = iDir;
+
+    while (true) {
+        switch (dir) {
+            case Dir.UP:
+                var newY = y - 1;
+                if (newY < 0 || newY >= map.length)
+                    break;
+                if (map[newY][x] < 0 || newY == by && x == bx)
+                    dir = Dir.RIGHT;
+                else {
+                    y = newY;
+                    if (y == iy && x == ix && dir == iDir) return true;
+                }
+            case Dir.RIGHT:
+                var newX = x + 1;
+                if (newX < 0 || newX >= map[0].length)
+                    break;
+                if (map[y][newX] < 0 || y == by && newX == bx)
+                    dir = Dir.DOWN;
+                else {
+                    x = newX;
+                    if (y == iy && x == ix && dir == iDir) return true;
+                }
+            case Dir.DOWN:
+                var newY = y + 1;
+                if (newY < 0 || newY >= map.length)
+                    break;
+                if (map[newY][x] < 0 || newY == by && x == bx)
+                    dir = Dir.LEFT;
+                else {
+                    y = newY;
+                    if (y == iy && x == ix && dir == iDir) return true;
+                }
+            case Dir.LEFT:
+                var newX = x - 1;
+                if (newX < 0 || newX >= map[0].length)
+                    break;
+                if (map[y][newX] < 0 || y == by && newX == bx)
+                    dir = Dir.UP;
+                else {
+                    x = newX;
+                    if (y == iy && x == ix && dir == iDir) return true;
+                }
+        }
+    }
+
+    return false;
 }
