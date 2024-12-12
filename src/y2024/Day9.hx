@@ -8,11 +8,13 @@ using haxe.Int64;
 
 var testData = "2333133121414131402";
 
+// 6085166247730 is too low
+
 class Day9 extends DayEngine {
 	public static function make(data:String) {
-		var tests:Array<TestData> = [{data: testData, expected: [1928]}, {data: "12345", expected: ["132"]},];
+		var tests:Array<TestData> = [{data: testData, expected: ["1928"]}, {data: "12345", expected: ["60"]},];
 
-		new Day9(data, tests, false);
+		new Day9(data, tests, true);
 	}
 
 	function problem1(data:String):Dynamic {
@@ -34,20 +36,39 @@ class Day9 extends DayEngine {
 			var bEntry = disk[backwardIndex];
 
 			if (forwardIndex % 2 == 0) {
+				var spaceToFill = forwardIndex == backwardIndex ? fEntry - backwardUsed : fEntry;
+
 				var fileID = forwardIndex >> 1;
-				sum += (fEntry * blockPosition + tri(fEntry)) * fileID;
-				blockPosition += fEntry;
+				sum += (spaceToFill * blockPosition + tri(spaceToFill)) * fileID;
+				blockPosition += spaceToFill;
+
 				++forwardIndex;
 			} else {
-				if (fEntry - forwardUsed == bEntry - backwardUsed) {
-					// TODO for each situation <, >, ==
+				var fRemaining = fEntry - forwardUsed;
+				var bRemaining = bEntry - backwardUsed;
+				var spaceToFill = Std.int(Math.min(fRemaining, bRemaining));
+
+				var fileID = backwardIndex >> 1;
+				sum += (spaceToFill * blockPosition + tri(spaceToFill)) * fileID;
+				blockPosition += spaceToFill;
+
+				if (fRemaining == bRemaining) {
+					++forwardIndex;
+					forwardUsed = 0;
+					backwardIndex -= 2;
+					backwardUsed = 0;
+				} else if (fRemaining < bRemaining) {
+					++forwardIndex;
+					forwardUsed = 0;
+					backwardUsed += spaceToFill;
+				} else {
+					forwardUsed += spaceToFill;
+					backwardIndex -= 2;
+					backwardUsed = 0;
 				}
-				blockPosition += fEntry;
-				++forwardIndex;
 			}
 		}
 
-		Sys.println(sum.toStr());
 		return sum.toStr();
 	}
 
