@@ -23,7 +23,7 @@ var testData = "
 
 class Day8 extends DayEngine {
 	public static function make(data:String) {
-		var tests:Array<TestData> = [{data: testData, expected: [14]}];
+		var tests:Array<TestData> = [{data: testData, expected: [14, 34]}];
 
 		new Day8(data, tests, true);
 	}
@@ -73,7 +73,57 @@ class Day8 extends DayEngine {
 	}
 
 	function problem2(data:String):Dynamic {
-		return null;
+		var parsed:Array<String> = data.split('\n').map(s -> s.trim()).filter(s -> s.length > 0);
+		var length = parsed.length;
+		var width = parsed[0].length;
+
+		var antinodeCount = 0;
+		var antinodes:HashMap<Vec2Data, Bool> = new HashMap();
+		var nodes:Map<String, Array<Vec2>> = [];
+
+		for (i => row in parsed) {
+			for (j in 0...width) {
+				var c = row.charAt(j);
+
+				if (c == '.')
+					continue;
+
+				var v = new Vec2(j, i);
+
+				if (!nodes.exists(c)) {
+					nodes[c] = [v];
+					continue;
+				}
+
+				for (node in nodes[c]) {
+					var diff = v - node;
+					var a = v;
+					while (check(a, length, width)) {
+						if (!antinodes.exists(a)) {
+							antinodes.set(a, true);
+							++antinodeCount;
+						}
+
+						a += diff;
+					}
+
+					diff = node - v;
+					a = node;
+					while (check(a, length, width)) {
+						if (!antinodes.exists(a)) {
+							antinodes.set(a, true);
+							++antinodeCount;
+						}
+
+						a += diff;
+					}
+				}
+
+				nodes[c].push(v);
+			}
+		}
+
+		return antinodeCount;
 	}
 }
 
