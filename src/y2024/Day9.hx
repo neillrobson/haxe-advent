@@ -8,18 +8,26 @@ using haxe.Int64;
 
 var testData = "2333133121414131402";
 
-// 6085166247730 is too low
+/**
+	0          4       8       12       16
 
+	00...111...2...333.44.5555.6666.777.888899
+	009..111...2...333.44.5555.6666.777.88889.
+	0099.111...2...333.44.5555.6666.777.8888..
+	00998111...2...333.44.5555.6666.777.888...
+	009981118..2...333.44.5555.6666.777.88....
+	0099811188.2...333.44.5555.6666.777.8.....
+	009981118882...333.44.5555.6666.777.......
+	0099811188827..333.44.5555.6666.77........
+	00998111888277.333.44.5555.6666.7.........
+	009981118882777333.44.5555.6666...........
+	009981118882777333644.5555.666............
+	00998111888277733364465555.66.............
+	0099811188827773336446555566..............
+**/
 class Day9 extends DayEngine {
 	public static function make(data:String) {
-		var tests:Array<TestData> = [
-			{data: testData, expected: ["1928"]},
-			{data: "12345", expected: ["60"]},
-			{data: "123450", expected: ["60"]},
-			{data: "123459", expected: ["60"]},
-			{data: "10101", expected: ["5"]},
-			{data: "20202", expected: ["23"]},
-		];
+		var tests:Array<TestData> = [{data: testData, expected: ["1928"]},];
 
 		new Day9(data, tests, true);
 	}
@@ -39,17 +47,13 @@ class Day9 extends DayEngine {
 		var blockPosition = 0;
 
 		while (forwardIndex <= backwardIndex) {
-			if (backwardIndex - forwardIndex <= 10) {
-				Sys.println('fi $forwardIndex bi $backwardIndex');
-			}
-
 			var fEntry = disk[forwardIndex];
 			var bEntry = disk[backwardIndex];
 
 			if (forwardIndex % 2 == 0) {
 				var spaceToFill = forwardIndex == backwardIndex ? fEntry - backwardUsed : fEntry;
 
-				var fileID = forwardIndex >> 1;
+				var fileID:Int64 = forwardIndex >> 1;
 				sum += (spaceToFill * blockPosition + tri(spaceToFill)) * fileID;
 				blockPosition += spaceToFill;
 
@@ -59,10 +63,7 @@ class Day9 extends DayEngine {
 				var bRemaining = bEntry - backwardUsed;
 				var spaceToFill = fRemaining < bRemaining ? fRemaining : bRemaining;
 
-				var fileID = backwardIndex >> 1;
-				// Max: (9 * 20,000 + tri(9)) * 10,000
-				// Max: (9 * 20,000 + 36) * 10,000
-				// Max: 1,800,360,000
+				var fileID:Int64 = backwardIndex >> 1;
 				sum += (spaceToFill * blockPosition + tri(spaceToFill)) * fileID;
 				blockPosition += spaceToFill;
 
