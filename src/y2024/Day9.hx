@@ -141,8 +141,8 @@ class Day9 extends DayEngine {
                     var space = heap.pop();
 
                     // Splice in `current`
-                    // var newSpace = new Node(pair(-1, width), null, null);
-                    // disk.splice(newSpace, current);
+                    var newSpace = new Node(pair(-1, width), null, null);
+                    disk.splice(newSpace, current);
                     disk.remove(current);
                     disk.splice(current, space);
 
@@ -154,7 +154,7 @@ class Day9 extends DayEngine {
                     if (rem == 0) {
                         if (space.item[0] == leftmostSpaceIndex) {
                             var n = space.next;
-                            while (n.item[0] % 2 == 0)
+                            while (n.item[0] < 0 || n.item[0] % 2 == 0)
                                 n = n.next;
                             leftmostSpaceIndex = n.item[0];
                         }
