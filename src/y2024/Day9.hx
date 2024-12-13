@@ -45,6 +45,7 @@ class Day9 extends DayEngine {
             {data: testData, expected: ["1928", "2858"]},
             {data: "12345", expected: ["60", "132"]},
             {data: "54321", expected: ["31", "31"]},
+            {data: "222", expected: ["5", "5"]},
         ];
 
         new Day9(data, tests, true);
@@ -174,11 +175,13 @@ class Day9 extends DayEngine {
                 if (rem == 0) {
                     if (space.item[0] == leftmostSpaceIndex) {
                         var n = space.next;
-                        while (n.item[0] < 0 || n.item[0] % 2 == 0)
+                        while (n.item[0] % 2 == 0)
                             n = n.next;
                         leftmostSpaceIndex = n.item[0];
                     }
                     disk.remove(space);
+                    if (leftmostSpaceIndex == -1)
+                        break;
                 } else {
                     leftmostSpaces[rem - 1].push(space);
                 }
