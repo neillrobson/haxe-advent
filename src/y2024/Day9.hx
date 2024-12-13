@@ -125,8 +125,6 @@ class Day9 extends DayEngine {
         if (current.item[0] % 2 != 0)
             current = current.prev;
 
-        var sum:Int64 = 0;
-
         while (current.item[0] > leftmostSpaceIndex) {
             // Find the previous consecutive file ID (before we re-arrange)
             var prev = current;
@@ -171,11 +169,26 @@ class Day9 extends DayEngine {
         }
 
         // Calculate checksum
+        var sum:Int64 = 0;
+        var blockPosition = 0;
+
         var d = disk.firstNode();
         while (d.item != null) {
-            Sys.println(d.item);
+            var index = d.item[0];
+            var spaceToFill = d.item[1];
+
+            if (index % 2 == 0) {
+                var fileID:Int64 = index >> 1;
+                sum += (spaceToFill * blockPosition + tri(spaceToFill)) * fileID;
+                Sys.print("".lpad(fileID.toStr(), spaceToFill));
+            } else {
+                Sys.print("".lpad(".", spaceToFill));
+            }
+
+            blockPosition += spaceToFill;
             d = d.next;
         }
+        Sys.println("");
 
         return sum.toStr();
     }
