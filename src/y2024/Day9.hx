@@ -34,12 +34,18 @@ var testData = "2333133121414131402";
     0099.1117772...333.44.5555.6666.....8888..
     0099.111777244.333....5555.6666.....8888..
     00992111777.44.333....5555.6666.....8888..
+
+    11329068336370 too high
+    10965474020085 too high
 **/
 class Day9 extends DayEngine {
     public static function make(data:String) {
-        var tests:Array<TestData> = [{data: testData, expected: ["1928", "2858"]},];
+        var tests:Array<TestData> = [
+            {data: testData, expected: ["1928", "2858"]},
+            {data: "12345", expected: ["60", "132"]},
+        ];
 
-        new Day9(data, tests, false);
+        new Day9(data, tests, true);
     }
 
     function problem1(data:String):Dynamic {
@@ -136,6 +142,9 @@ class Day9 extends DayEngine {
             for (w in width...10) {
                 var heap = leftmostSpaces[w - 1];
                 if (heap.length() > 0) {
+                    if (heap.peek().item[0] > current.item[0])
+                        continue;
+
                     var space = heap.pop();
 
                     // Splice in `current`
@@ -180,15 +189,16 @@ class Day9 extends DayEngine {
             if (index % 2 == 0) {
                 var fileID:Int64 = index >> 1;
                 sum += (spaceToFill * blockPosition + tri(spaceToFill)) * fileID;
-                Sys.print("".lpad(fileID.toStr(), spaceToFill));
-            } else {
-                Sys.print("".lpad(".", spaceToFill));
+                //     Sys.print("".lpad(fileID.toStr(), spaceToFill));
+                // } else {
+                //     Sys.print("".lpad(".", spaceToFill));
             }
 
             blockPosition += spaceToFill;
             d = d.next;
         }
-        Sys.println("");
+        // Sys.println("");
+        // Sys.println(sum.toStr());
 
         return sum.toStr();
     }
