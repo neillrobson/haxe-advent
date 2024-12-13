@@ -2,6 +2,8 @@ package y2024;
 
 import DayEngine.TestData;
 import haxe.ds.Vector;
+import util.Heap;
+import util.LinkedList;
 
 using StringTools;
 using haxe.Int64;
@@ -27,9 +29,9 @@ var testData = "2333133121414131402";
 **/
 class Day9 extends DayEngine {
 	public static function make(data:String) {
-		var tests:Array<TestData> = [{data: testData, expected: ["1928"]},];
+		var tests:Array<TestData> = [{data: testData, expected: ["1928", "2858"]},];
 
-		new Day9(data, tests, true);
+		new Day9(data, tests, false);
 	}
 
 	function problem1(data:String):Dynamic {
@@ -88,10 +90,49 @@ class Day9 extends DayEngine {
 	}
 
 	function problem2(data:String):Dynamic {
-		return null;
+		// Linked list of pairs: [index, width]
+		// Empty spaces are always *odd* indexes
+		// Heaps of empty spaces per width
+		// Traverse right to left, moving file entries backward
+		// compute the checksum at the very end
+
+		var d = data.trim();
+
+		var disk = new LinkedList<Pair>();
+		// Index into array with [width - 1]
+		var leftmostSpaces:Array<Heap<Node<Pair>>> = [for (i in 0...9) new Heap<Node<Pair>>((a, b) -> a.item[0] - b.item[0])];
+		var leftmostSpaceIndex = -1;
+
+		for (i in 0...d.length) {
+			var width = d.unsafeCodeAt(i) - 48;
+			disk.add(pair(i, width));
+			if (i % 2 != 0 && width > 0) {
+				leftmostSpaces[width - 1].push(disk.lastNode());
+				if (leftmostSpaceIndex == -1)
+					leftmostSpaceIndex = i;
+			}
+		}
+
+		var current = disk.lastNode();
+		if (current.item[0] % 2 != 0)
+			current = current.prev;
+
+		var sum:Int64 = 0;
+
+		Sys.println('current: ${current.item}');
+		for (heap in leftmostSpaces)
+			Sys.println('${heap.length()} | ${heap.peek()?.item}');
+
+		return sum.toStr();
 	}
 }
 
 inline function tri(n:Int) {
 	return (n * (n - 1)) >> 1;
+}
+
+typedef Pair = Vector<Int>;
+
+inline function pair(x:Int, y:Int):Pair {
+	return Vector.fromArrayCopy([x, y]);
 }
