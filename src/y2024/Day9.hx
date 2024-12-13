@@ -37,12 +37,14 @@ var testData = "2333133121414131402";
 
     11329068336370 too high
     10965474020085 too high
+    11220449192742 ugh
 **/
 class Day9 extends DayEngine {
     public static function make(data:String) {
         var tests:Array<TestData> = [
             {data: testData, expected: ["1928", "2858"]},
             {data: "12345", expected: ["60", "132"]},
+            {data: "54321", expected: ["31", "31"]},
         ];
 
         new Day9(data, tests, true);
@@ -139,38 +141,46 @@ class Day9 extends DayEngine {
                 prev = prev.prev;
 
             var width = current.item[1];
+
+            var leftmostIdx:Int = -1;
+            var leftmostHeap:Heap<Node<Pair>> = null;
             for (w in width...10) {
                 var heap = leftmostSpaces[w - 1];
                 if (heap.length() > 0) {
-                    if (heap.peek().item[0] > current.item[0])
+                    var node = heap.peek();
+                    if (node.item[0] > current.item[0])
                         continue;
-
-                    var space = heap.pop();
-
-                    // Splice in `current`
-                    var newSpace = new Node(pair(-1, width), null, null);
-                    disk.splice(newSpace, current);
-                    disk.remove(current);
-                    disk.splice(current, space);
-
-                    // Reduce size of space
-                    space.item[1] -= width;
-                    var rem = space.item[1];
-
-                    // Re-insert in correct heap
-                    if (rem == 0) {
-                        if (space.item[0] == leftmostSpaceIndex) {
-                            var n = space.next;
-                            while (n.item[0] < 0 || n.item[0] % 2 == 0)
-                                n = n.next;
-                            leftmostSpaceIndex = n.item[0];
-                        }
-                        disk.remove(space);
-                    } else {
-                        leftmostSpaces[rem - 1].push(space);
+                    if (leftmostIdx == -1 || leftmostIdx > node.item[0]) {
+                        leftmostIdx = node.item[0];
+                        leftmostHeap = heap;
                     }
+                }
+            }
 
-                    break;
+            if (leftmostHeap != null) {
+                var space = leftmostHeap.pop();
+
+                // Splice in `current`
+                var newSpace = new Node(pair(-1, width), null, null);
+                disk.splice(newSpace, current);
+                disk.remove(current);
+                disk.splice(current, space);
+
+                // Reduce size of space
+                space.item[1] -= width;
+                var rem = space.item[1];
+
+                // Re-insert in correct heap
+                if (rem == 0) {
+                    if (space.item[0] == leftmostSpaceIndex) {
+                        var n = space.next;
+                        while (n.item[0] < 0 || n.item[0] % 2 == 0)
+                            n = n.next;
+                        leftmostSpaceIndex = n.item[0];
+                    }
+                    disk.remove(space);
+                } else {
+                    leftmostSpaces[rem - 1].push(space);
                 }
             }
 
