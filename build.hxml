@@ -1,4 +1,5 @@
 --class-path src
 -D analyzer-optimize
 -L tink_core
+-L sure
 --run Main

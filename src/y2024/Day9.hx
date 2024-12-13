@@ -202,16 +202,11 @@ class Day9 extends DayEngine {
             if (index % 2 == 0) {
                 var fileID:Int64 = index >> 1;
                 sum += (spaceToFill * blockPosition + tri(spaceToFill)) * fileID;
-                //     Sys.print("".lpad(fileID.toStr(), spaceToFill));
-                // } else {
-                //     Sys.print("".lpad(".", spaceToFill));
             }
 
             blockPosition += spaceToFill;
             d = d.next;
         }
-        // Sys.println("");
-        // Sys.println(sum.toStr());
 
         return sum.toStr();
     }

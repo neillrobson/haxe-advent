@@ -33,15 +33,20 @@ class Heap<T> {
         while (true) {
             var l = 2 * i + 1;
             var r = 2 * i + 2;
-            if (l < data.length && comparator(data[l], data[i]) < 0) {
-                swap(data[l], data[i]);
-                i = l;
-            } else if (r < data.length && comparator(data[r], data[i]) < 0) {
-                swap(data[r], data[i]);
-                i = r;
-            } else {
-                break;
+
+            var s = i;
+            if (l < data.length && comparator(data[l], data[s]) < 0) {
+                s = l;
             }
+            if (r < data.length && comparator(data[r], data[s]) < 0) {
+                s = r;
+            }
+
+            if (s == i)
+                break;
+
+            swap(data[s], data[i]);
+            i = s;
         }
 
         return ret;
