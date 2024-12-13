@@ -44,6 +44,20 @@ class LinkedList<T> {
 
 		return null;
 	}
+
+	public function remove(node:Node<T>) {
+		node.next.prev = node.prev;
+		node.prev.next = node.next;
+		node.prev = null;
+		node.next = null;
+	}
+
+	public function splice(node:Node<T>, next:Node<T>) {
+		node.prev = next.prev;
+		node.next = next;
+		node.prev.next = node;
+		node.next.prev = node;
+	}
 }
 
 class Node<T> {
