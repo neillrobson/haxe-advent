@@ -7,7 +7,7 @@ import sys.io.File;
 
 using tink.CoreApi;
 
-typedef AdventMakeFunc = String -> Void;
+typedef AdventMakeFunc = String->Void;
 
 class Main {
     var year = 2024;
@@ -43,7 +43,12 @@ class Main {
             }
         }
 
-        days.sort((a, b) -> a < b ? -1 : 1);
+        days.sort((a, b) -> {
+            var an = Std.parseInt(a.substr(3));
+            var bn = Std.parseInt(b.substr(3));
+
+            return an - bn;
+        });
         var ret:Array<Expr> = [];
         for (day in days) {
             ret.push(macro y2024.$day.make);
