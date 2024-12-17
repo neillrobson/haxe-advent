@@ -7,7 +7,8 @@ import util.Vec2;
 using StringTools;
 using util.Tuple;
 
-var testData = "89010123
+var testData = "
+89010123
 78121874
 87430965
 96549874
@@ -20,7 +21,7 @@ class Day10 extends DayEngine {
     public static function make(data:String) {
         var tests:Array<TestData> = [{data: testData, expected: [36]}];
 
-        new Day10(data, tests, false);
+        new Day10(data, tests, true);
     }
 
     function problem1(data:String):Dynamic {
@@ -50,5 +51,29 @@ class Day10 extends DayEngine {
 function scorePath(data:Array<Array<Int>>, i:Int, j:Int) {
     var locs:HashSet<Vec2> = new HashSet();
 
-    return 0;
+    locs.set(new Vec2(j, i));
+
+    for (n in 1...10) {
+        if (locs.length == 0)
+            return 0;
+
+        var sources = locs.values();
+        locs.clear();
+
+        for (source in sources) {
+            var x = source.x;
+            var y = source.y;
+
+            if (x - 1 >= 0 && data[y][x - 1] == n)
+                locs.set(new Vec2(x - 1, y));
+            if (y - 1 >= 0 && data[y - 1][x] == n)
+                locs.set(new Vec2(x, y - 1));
+            if (x + 1 < data[0].length && data[y][x + 1] == n)
+                locs.set(new Vec2(x + 1, y));
+            if (y + 1 < data.length && data[y + 1][x] == n)
+                locs.set(new Vec2(x, y + 1));
+        }
+    }
+
+    return locs.length;
 }
