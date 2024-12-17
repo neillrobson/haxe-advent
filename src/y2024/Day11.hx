@@ -9,18 +9,23 @@ using haxe.Int64;
 
 var testData = "125 17";
 
-// 147245 too low
-
 class Day11 extends DayEngine {
     public static function make(data:String) {
         var tests:Array<TestData> = [{data: testData, expected: ["55312"]}];
 
-        sure(digitCount(0) == 1);
-        sure(digitCount(1) == 1);
-        sure(digitCount(9) == 1);
-        sure(digitCount(10) == 2);
-        sure(digitCount(99) == 2);
-        sure(digitCount(100) == 3);
+        // sure(digitCount(0) == 1);
+        // sure(digitCount(1) == 1);
+        // sure(digitCount(9) == 1);
+        // sure(digitCount(10) == 2);
+        // sure(digitCount(99) == 2);
+        // sure(digitCount(100) == 3);
+
+        // sure(mag(0) == 1);
+        sure(mag(1) == 1);
+        sure(mag(9) == 1);
+        sure(mag(10) == 2);
+        sure(mag(99) == 2);
+        sure(mag(100) == 3);
 
         new Day11(data, tests, true);
     }
@@ -38,16 +43,42 @@ class Day11 extends DayEngine {
     }
 }
 
-var ln10 = Math.log(10);
+var powersOfTen = [
+    0x1i64,
+    0xAi64,
+    0x64i64,
+    0x3E8i64,
+    0x2710i64,
+    0x186A0i64,
+    0xF4240i64,
+    0x989680i64,
+    0x5F5E100i64,
+    0x3B9ACA00i64,
+    0x2540BE400i64,
+    0x174876E800i64,
+    0xE8D4A51000i64,
+    0x9184E72A000i64,
+    0x5AF3107A4000i64,
+    0x38D7EA4C68000i64,
+    0x2386F26FC10000i64,
+    0x16345785D8A0000i64,
+    0xDE0B6B3A7640000i64,
+    0x8AC7230489E80000i64,
+    0xFFFFFFFFFFFFFFFFi64
+];
 
-inline function digitCount(n:Int64):Int {
-    try {
-        var i = n.toInt();
-
-        return 1 + Math.floor(Math.max(Math.log(i), 0) / ln10);
-    } catch (e)
-        return n.toStr().length;
+inline function mag(n:Int64):Int {
+    return powersOfTen.findIndex((i) -> i > n);
 }
+
+// var ln10 = Math.log(10);
+// inline function digitCount(n:Int64):Int {
+//     try {
+//         var i = n.toInt();
+//         return 1 + Math.floor(Math.max(Math.log(i), 0) / ln10);
+//     } catch (e)
+//         return n.toStr().length;
+// }
 
 function stoneCount(n:Int64, i:Int):Int64 {
     if (i == 0)
@@ -55,13 +86,31 @@ function stoneCount(n:Int64, i:Int):Int64 {
 
     --i;
 
+    var m:Int;
+
     if (n == 0)
         return stoneCount(1, i);
-    else if (digitCount(n) % 2 == 0) {
-        var s = Std.string(n);
-        var d = s.length >> 1;
-        var a = Std.parseInt(s.substr(0, d));
-        var b = Std.parseInt(s.substr(d));
+    else if ((m = mag(n)) % 2 == 0) {
+        var d = m >> 1;
+        var a:Int64 = 0;
+        var b:Int64 = 0;
+
+        for (j in 0...d) {
+            var next = n % 10;
+            a += next * Std.int(Math.pow(10, j));
+            next /= 10;
+        }
+
+        for (j in 0...d) {
+            var next = n % 10;
+            b += next * Std.int(Math.pow(10, j));
+            next /= 10;
+        }
+
+        // var s = Std.string(n);
+        // var d = s.length >> 1;
+        // var a = Std.parseInt(s.substr(0, d));
+        // var b = Std.parseInt(s.substr(d));
 
         return stoneCount(a, i) + stoneCount(b, i);
     } else
