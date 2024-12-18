@@ -28,6 +28,9 @@ class Day11 extends DayEngine {
         sure(mag(99) == 2);
         sure(mag(100) == 3);
 
+        for (i in powersOfTen)
+            Sys.println((i - 1).toStr());
+
         new Day11(data, tests, true);
     }
 
@@ -40,7 +43,11 @@ class Day11 extends DayEngine {
     }
 
     function problem2(data:String):Dynamic {
-        return null;
+        var ints:Array<Int64> = data.split(' ').map(s -> s.trim()).filter(s -> s.length > 0).map(Int64.parseString);
+
+        var sum:Int64 = ints.fold((i, acc) -> acc + stoneCount(i, 75), 0);
+
+        return sum.toStr();
     }
 }
 
