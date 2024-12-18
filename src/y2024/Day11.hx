@@ -2,6 +2,7 @@ package y2024;
 
 import DayEngine.TestData;
 import Sure.sure;
+import util.Int64Map;
 
 using Lambda;
 using StringTools;
@@ -81,6 +82,8 @@ inline function mag(n:Int64):Int {
 // }
 
 function stoneCount(n:Int64, i:Int):Int64 {
+    static var cache:Int64Map<{a:Int64, b:Int64}> = new Int64Map();
+
     if (i == 0)
         return 1;
 
@@ -91,20 +94,29 @@ function stoneCount(n:Int64, i:Int):Int64 {
     if (n == 0)
         return stoneCount(1, i);
     else if ((m = mag(n)) % 2 == 0) {
-        var d = m >> 1;
-        var a:Int64 = 0;
-        var b:Int64 = 0;
+        var ab = cache.get(n);
 
-        for (j in 0...d) {
-            var next = n % 10;
-            a += next * Std.int(Math.pow(10, j));
-            next /= 10;
-        }
+        if (ab == null) {
+            var d = m >> 1;
+            var a:Int64 = 0;
+            var b:Int64 = 0;
 
-        for (j in 0...d) {
-            var next = n % 10;
-            b += next * Std.int(Math.pow(10, j));
-            next /= 10;
+            var digitArr:Array<Int64> = [];
+
+            var z = n;
+            while (z > 0) {
+                var qm = z.divMod(10);
+                digitArr.push(qm.modulus);
+                z = qm.quotient;
+            }
+
+            for (j in 1...d + 1) {
+                a = a * 10 + digitArr[m - j];
+                b = b * 10 + digitArr[m - j - d];
+            }
+
+            ab = {a: a, b: b};
+            cache.set(n, ab);
         }
 
         // var s = Std.string(n);
@@ -112,7 +124,7 @@ function stoneCount(n:Int64, i:Int):Int64 {
         // var a = Std.parseInt(s.substr(0, d));
         // var b = Std.parseInt(s.substr(d));
 
-        return stoneCount(a, i) + stoneCount(b, i);
+        return stoneCount(ab.a, i) + stoneCount(ab.b, i);
     } else
         return stoneCount(n * 2024, i);
 }
