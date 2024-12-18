@@ -23,28 +23,39 @@ class Day11 extends DayEngine {
         sure(mag(100000000000000000i64) == 18);
         sure(mag(1000000000000000000i64) == -1);
 
-        var testMap = new Int64Map<Int>();
-        testMap.set(123, 45);
-        testMap.set(1000000000000000i64, 78);
-
-        for (k => v in testMap)
-            Sys.println('${k.toStr()}: $v');
-
-        new Day11(data, tests, false);
+        new Day11(data, tests, true);
     }
 
     function problem1(data:String):Dynamic {
-        var ints:Array<Int64> = data.split(' ').map(s -> s.trim()).filter(s -> s.length > 0).map(Int64.parseString);
+        var map = data.split(' ').map(s -> s.trim()).filter(s -> s.length > 0).fold((s, map) -> {
+            add(map, Int64.parseString(s), 1);
 
-        var sum:Int64 = ints.fold((i, acc) -> acc + stoneCount(i, 25), 0);
+            return map;
+        }, new Int64Map<Int64>());
+
+        for (_ in 0...25)
+            map = blink(map);
+
+        var sum = 0i64;
+        for (_ => v in map)
+            sum += v;
 
         return sum.toStr();
     }
 
     function problem2(data:String):Dynamic {
-        var ints:Array<Int64> = data.split(' ').map(s -> s.trim()).filter(s -> s.length > 0).map(Int64.parseString);
+        var map = data.split(' ').map(s -> s.trim()).filter(s -> s.length > 0).fold((s, map) -> {
+            add(map, Int64.parseString(s), 1);
 
-        var sum:Int64 = ints.fold((i, acc) -> acc + stoneCount(i, 75), 0);
+            return map;
+        }, new Int64Map<Int64>());
+
+        for (_ in 0...75)
+            map = blink(map);
+
+        var sum = 0i64;
+        for (_ => v in map)
+            sum += v;
 
         return sum.toStr();
     }
@@ -76,45 +87,51 @@ inline function mag(n:Int64):Int {
     return powersOfTen.findIndex((i) -> i > n);
 }
 
-function stoneCount(n:Int64, i:Int):Int64 {
+inline function add(map:Int64Map<Int64>, k:Int64, v:Int64) {
+    map.set(k, (map.get(k) ?? 0i64) + v);
+}
+
+function blink(map:Int64Map<Int64>):Int64Map<Int64> {
     static var cache:Int64Map<{a:Int64, b:Int64}> = new Int64Map();
 
-    if (i == 0)
-        return 1;
-
-    --i;
+    var ret = new Int64Map<Int64>();
 
     var m:Int;
 
-    if (n == 0)
-        return stoneCount(1, i);
-    else if ((m = mag(n)) % 2 == 0) {
-        var ab = cache.get(n);
+    for (k => v in map) {
+        if (k == 0) {
+            add(ret, 1, v);
+        } else if ((m = mag(k)) % 2 == 0) {
+            var ab = cache.get(k);
 
-        if (ab == null) {
-            var d = m >> 1;
-            var a:Int64 = 0;
-            var b:Int64 = 0;
+            if (ab == null) {
+                var d = m >> 1;
+                var a:Int64 = 0;
+                var b:Int64 = 0;
 
-            var digitArr:Array<Int64> = [];
+                var digitArr:Array<Int64> = [];
 
-            var z = n;
-            while (z > 0) {
-                var qm = z.divMod(10);
-                digitArr.push(qm.modulus);
-                z = qm.quotient;
+                var z = k;
+                while (z > 0) {
+                    var qm = z.divMod(10);
+                    digitArr.push(qm.modulus);
+                    z = qm.quotient;
+                }
+
+                for (j in 1...d + 1) {
+                    a = a * 10 + digitArr[m - j];
+                    b = b * 10 + digitArr[m - j - d];
+                }
+
+                ab = {a: a, b: b};
+                cache.set(k, ab);
             }
 
-            for (j in 1...d + 1) {
-                a = a * 10 + digitArr[m - j];
-                b = b * 10 + digitArr[m - j - d];
-            }
+            add(ret, ab.a, v);
+            add(ret, ab.b, v);
+        } else
+            add(ret, k * 2024, v);
+    }
 
-            ab = {a: a, b: b};
-            cache.set(n, ab);
-        }
-
-        return stoneCount(ab.a, i) + stoneCount(ab.b, i);
-    } else
-        return stoneCount(n * 2024, i);
+    return ret;
 }
