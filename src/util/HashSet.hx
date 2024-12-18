@@ -33,11 +33,14 @@ class HashSet<T:Comparable<T>> {
     public function remove(t:T) {
         var hash = t.hashCode();
         var i = (hash < 0 ? -hash : hash) % size;
-        var ret = map[i].remove(t);
-        if (ret)
-            --length;
+        for (e in map[i])
+            if (e.equals(t)) {
+                map[i].remove(e);
+                --length;
+                return true;
+            }
 
-        return ret;
+        return false;
     }
 
     public function values() {
