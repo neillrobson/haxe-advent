@@ -14,8 +14,13 @@ abstract Vec2(Vec2Data) from Vec2Data to Vec2Data {
         return new Vec2(a.x + b.x, a.y + b.y);
     }
 
+    @:op(a + b) @:commutative
+    static inline function addScalar(a:Vec2, b:Int):Vec2 {
+        return new Vec2(a.x + b, a.y + b);
+    }
+
     @:op(a - b)
-    static inline function subtract(a:Vec2, b:Vec2):Vec2 {
+    static inline function subtract(a:Vec2, b:Vec2) { // type hint for return value causes error
         return new Vec2(a.x - b.x, a.y - b.y);
     }
 
