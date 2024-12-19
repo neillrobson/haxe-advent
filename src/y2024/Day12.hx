@@ -22,6 +22,12 @@ AAABBA
 ABBAAA
 ABBAAA
 AAAAAA";
+var test3 = "
+XXXXX
+XOOOX
+OOXOX
+XOOOX
+XXXXX";
 
 // 805944 too high
 
@@ -30,6 +36,7 @@ class Day12 extends DayEngine {
         var tests:Array<TestData> = [
             {data: testData, expected: [1930, 1206]},
             {data: test2, expected: [null, 32 + 12 * 28]},
+            {data: test3, expected: [null, 15 * 12 + 1 * 4 + 9 * 12]},
         ];
 
         new Day12(data, tests, true);
@@ -148,36 +155,48 @@ function getRegionWallPrice(map:Array<Array<Int>>, coords:HashSet<Vec2>, start:V
             vecs.push(new Vec2(x - 1, y));
         } else {
             walls[y][x] |= 1;
+            ++perimeter;
 
-            if ((y - 1 < 0 || walls[y - 1][x] & 1 == 0) && (y + 1 >= Y || walls[y + 1][x] & 1 == 0))
-                ++perimeter;
+            if (y - 1 >= 0 && walls[y - 1][x] & 1 != 0)
+                --perimeter;
+            if (y + 1 < Y && walls[y + 1][x] & 1 != 0)
+                --perimeter;
         }
 
         if (y - 1 >= 0 && map[y - 1][x] == n) {
             vecs.push(new Vec2(x, y - 1));
         } else {
             walls[y][x] |= 2;
+            ++perimeter;
 
-            if ((x - 1 < 0 || walls[y][x - 1] & 2 == 0) && (x + 1 >= X || walls[y][x + 1] & 2 == 0))
-                ++perimeter;
+            if (x - 1 >= 0 && walls[y][x - 1] & 2 != 0)
+                --perimeter;
+            if (x + 1 < X && walls[y][x + 1] & 2 != 0)
+                --perimeter;
         }
 
         if (x + 1 < X && map[y][x + 1] == n) {
             vecs.push(new Vec2(x + 1, y));
         } else {
             walls[y][x] |= 4;
+            ++perimeter;
 
-            if ((y - 1 < 0 || walls[y - 1][x] & 4 == 0) && (y + 1 >= Y || walls[y + 1][x] & 4 == 0))
-                ++perimeter;
+            if (y - 1 >= 0 && walls[y - 1][x] & 4 != 0)
+                --perimeter;
+            if (y + 1 < Y && walls[y + 1][x] & 4 != 0)
+                --perimeter;
         }
 
         if (y + 1 < Y && map[y + 1][x] == n) {
             vecs.push(new Vec2(x, y + 1));
         } else {
             walls[y][x] |= 8;
+            ++perimeter;
 
-            if ((x - 1 < 0 || walls[y][x - 1] & 8 == 0) && (x + 1 >= X || walls[y][x + 1] & 8 == 0))
-                ++perimeter;
+            if (x - 1 >= 0 && walls[y][x - 1] & 8 != 0)
+                --perimeter;
+            if (x + 1 < X && walls[y][x + 1] & 8 != 0)
+                --perimeter;
         }
 
         for (vec in vecs) {
