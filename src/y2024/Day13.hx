@@ -23,10 +23,22 @@ Prize: X=7870, Y=6450
 Button A: X+69, Y+23
 Button B: X+27, Y+71
 Prize: X=18641, Y=10279";
+var noSolution = "
+Button A: X+3, Y+3
+Button B: X+5, Y+5
+Prize: X=8, Y=9";
+var manySolutions = "
+Button A: X+3, Y+6
+Button B: X+5, Y+10
+Prize: X=80, Y=160";
 
 class Day13 extends DayEngine {
     public static function make(data:String) {
-        var tests:Array<TestData> = [{data: testData, expected: [480]}];
+        var tests:Array<TestData> = [
+            {data: testData, expected: [480]},
+            {data: noSolution, expected: [0]},
+            {data: manySolutions, expected: [16]},
+        ];
 
         var inconsistent = Vector.fromArrayCopy([
             Vector.fromArrayCopy([1, -2, 3, 2]),
@@ -61,8 +73,8 @@ class Day13 extends DayEngine {
         sure(s.b == 1);
 
         s = shiftSearch(10, 10, 5, 3);
-        sure(s.a == 25);
-        sure(s.b == 1);
+        sure(s.a == 0);
+        sure(s.b == 16);
 
         new Day13(data, tests, false);
     }
@@ -202,12 +214,12 @@ function optimize(m:Vector<Vector<Int>>, n:Int):{a:Int, b:Int} {
 }
 
 /**
- * Getting a and b to positive values, with b minimized.
+ * Getting a and b to positive values, with a minimized.
  */
 function shiftSearch(a:Int, b:Int, aShift:Int, bShift:Int):{a:Int, b:Int} {
-    var diff = Std.int(b / bShift) - (b < 0 ? 1 : 0);
+    var diff = Std.int(a / aShift) - (a < 0 ? 1 : 0);
 
-    return {a: a + aShift * diff, b: b - bShift * diff};
+    return {a: a - aShift * diff, b: b + bShift * diff};
 }
 
 /**
