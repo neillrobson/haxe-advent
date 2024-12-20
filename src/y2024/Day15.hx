@@ -67,7 +67,7 @@ class Day15 extends DayEngine {
     public static function make(data:String) {
         var tests:Array<TestData> = [{data: testSmall, expected: [2028]}, {data: testMedium, expected: [10092]}];
 
-        new Day15(data, tests, false);
+        new Day15(data, tests, true);
     }
 
     function problem1(data:String):Dynamic {
