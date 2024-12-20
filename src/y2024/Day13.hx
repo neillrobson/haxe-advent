@@ -124,7 +124,46 @@ class Day13 extends DayEngine {
     }
 
     function problem2(data:String):Dynamic {
-        return null;
+        var lines = data.split('\n').map(s -> s.trim()).filter(s -> s.length > 0);
+        var matrices:Array<Vector<Vector<Int64>>> = [];
+
+        var lineA = ~/Button A: X\+(\d+), Y\+(\d+)/;
+        var lineB = ~/Button B: X\+(\d+), Y\+(\d+)/;
+        var lineP = ~/Prize: X=(\d+), Y=(\d+)/;
+
+        for (i in 0...Std.int(lines.length / 3)) {
+            var ix = i * 3;
+
+            var x:Vector<Int64> = new Vector(3);
+            var y:Vector<Int64> = new Vector(3);
+            var matrix = new Vector(2);
+            matrix[0] = x;
+            matrix[1] = y;
+
+            lineA.match(lines[ix]);
+            x[0] = Int64.parseString(lineA.matched(1));
+            y[0] = Int64.parseString(lineA.matched(2));
+
+            lineB.match(lines[ix + 1]);
+            x[1] = Int64.parseString(lineB.matched(1));
+            y[1] = Int64.parseString(lineB.matched(2));
+
+            lineP.match(lines[ix + 2]);
+            x[2] = 10000000000000i64 + Int64.parseString(lineP.matched(1));
+            y[2] = 10000000000000i64 + Int64.parseString(lineP.matched(2));
+
+            matrices.push(matrix);
+        }
+
+        var sum = matrices.fold((m, s) -> {
+            var badIdx = gaussJordan(m);
+
+            var ab = optimize(m, badIdx);
+
+            return s + ab.a * 3 + ab.b;
+        }, 0);
+
+        return sum.toStr();
     }
 }
 
