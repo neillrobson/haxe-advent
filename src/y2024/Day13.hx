@@ -29,15 +29,15 @@ class Day13 extends DayEngine {
         var tests:Array<TestData> = [{data: testData, expected: [480]}];
 
         var inconsistent = Vector.fromArrayCopy([
-            Vector.fromArrayCopy([1., -2, 3, 2]),
-            Vector.fromArrayCopy([2., -3, 8, 7]),
-            Vector.fromArrayCopy([3., -4, 13, 8]),
+            Vector.fromArrayCopy([1, -2, 3, 2]),
+            Vector.fromArrayCopy([2, -3, 8, 7]),
+            Vector.fromArrayCopy([3, -4, 13, 8]),
         ]);
 
         var earlyBreak = Vector.fromArrayCopy([
-            Vector.fromArrayCopy([1., -2, 3, 2]),
-            Vector.fromArrayCopy([2., -4, 7, 7]),
-            Vector.fromArrayCopy([3., -6, 13, 8]),
+            Vector.fromArrayCopy([1, -2, 3, 2]),
+            Vector.fromArrayCopy([2, -4, 7, 7]),
+            Vector.fromArrayCopy([3, -6, 13, 8]),
         ]);
 
         sure(gaussJordan(earlyBreak) == 1);
@@ -69,7 +69,7 @@ class Day13 extends DayEngine {
 
     function problem1(data:String):Dynamic {
         var lines = data.split('\n').map(s -> s.trim()).filter(s -> s.length > 0);
-        var matrices:Array<Vector<Vector<Float>>> = [];
+        var matrices:Array<Vector<Vector<Int>>> = [];
 
         var lineA = ~/Button A: X\+(\d+), Y\+(\d+)/;
         var lineB = ~/Button B: X\+(\d+), Y\+(\d+)/;
@@ -78,8 +78,8 @@ class Day13 extends DayEngine {
         for (i in 0...Std.int(lines.length / 3)) {
             var ix = i * 3;
 
-            var x:Vector<Float> = new Vector(3);
-            var y:Vector<Float> = new Vector(3);
+            var x:Vector<Int> = new Vector(3);
+            var y:Vector<Int> = new Vector(3);
             var matrix = new Vector(2);
             matrix[0] = x;
             matrix[1] = y;
@@ -125,7 +125,7 @@ class Day13 extends DayEngine {
     }
 }
 
-function gaussJordan(a:Vector<Vector<Float>>):Int {
+function gaussJordan(a:Vector<Vector<Int>>):Int {
     var n = a.length;
     var flag = -1;
 
@@ -156,10 +156,12 @@ function gaussJordan(a:Vector<Vector<Float>>):Int {
         // necessary to zero out the ith column.
         for (j in 0...n) {
             if (i != j) {
-                var p = a[j][i] / a[i][i];
+                var d = gcd(a[j][i], a[i][i]);
+                var id = Std.int(a[i][i] / d);
+                var jd = Std.int(a[j][i] / d);
 
                 for (k in 0...n + 1)
-                    a[j][k] -= a[i][k] * p;
+                    a[j][k] = a[j][k] * id - a[i][k] * jd;
             }
         }
     }
@@ -167,12 +169,16 @@ function gaussJordan(a:Vector<Vector<Float>>):Int {
     return flag;
 }
 
+function gcd(a, b) {
+    return b != 0 ? gcd(b, a % b) : a;
+}
+
 /**
  * Once in row-echelon form
  * @param a
  * @return Bool
  */
-function optimize(m:Vector<Vector<Float>>, n:Int):{a:Int, b:Int} {
+function optimize(m:Vector<Vector<Int>>, n:Int):{a:Int, b:Int} {
     // Only one solution
     if (n < 0) {
         return {
@@ -187,9 +193,9 @@ function optimize(m:Vector<Vector<Float>>, n:Int):{a:Int, b:Int} {
 
     // Many solutions: optimize for b
     var row = m[1 - n];
-    var a = Std.int(row[0]);
-    var b = Std.int(row[1]);
-    var c = Std.int(row[2]);
+    var a = row[0];
+    var b = row[1];
+    var c = row[2];
 
     var ret = diophantine(a, b, c);
     if (ret == null)
