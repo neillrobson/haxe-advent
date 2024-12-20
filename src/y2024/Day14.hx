@@ -22,13 +22,13 @@ p=9,5 v=-3,-3";
 
 class Day14 extends DayEngine {
     public static function make(data:String) {
-        var tests:Array<TestData> = [{data: testData, expected: [12]}];
+        var tests:Array<TestData> = [{data: testData, expected: []}];
 
         var dest = move([2, 4], [2, -3], 5, [11, 7]);
         sure(dest.x == 1);
         sure(dest.y == 3);
 
-        new Day14(data, tests, false);
+        new Day14(data, tests, true);
     }
 
     function problem1(data:String):Dynamic {
@@ -36,7 +36,7 @@ class Day14 extends DayEngine {
 
         var regex = ~/p=(\d+),(\d+) v=(-?\d+),(-?\d+)/;
         var time = 100;
-        var size = new Vec2(11, 7);
+        var size = new Vec2(101, 103);
         var dests = lines.map(str -> {
             regex.match(str);
 
