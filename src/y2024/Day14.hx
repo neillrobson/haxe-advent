@@ -2,6 +2,7 @@ package y2024;
 
 import DayEngine.TestData;
 import Sure.sure;
+import haxe.ds.Vector;
 import util.Vec2;
 
 using Lambda;
@@ -68,7 +69,46 @@ class Day14 extends DayEngine {
     }
 
     function problem2(data:String):Dynamic {
-        return null;
+        var lines = data.split('\n').map(s -> s.trim()).filter(s -> s.length > 0);
+
+        var regex = ~/p=(\d+),(\d+) v=(-?\d+),(-?\d+)/;
+        var ps:Array<Vec2> = [];
+        var vs:Array<Vec2> = [];
+
+        for (str in lines) {
+            regex.match(str);
+
+            ps.push(new Vec2(Std.parseInt(regex.matched(1)), Std.parseInt(regex.matched(2))));
+            vs.push(new Vec2(Std.parseInt(regex.matched(3)), Std.parseInt(regex.matched(4))));
+        }
+
+        var size = new Vec2(101, 103);
+
+        var display:Vector<Vector<Int>> = new Vector(size.y);
+        for (i in 0...size.y)
+            display[i] = new Vector(size.x, 0);
+
+        var count = 0;
+        do {
+            ++count;
+
+            for (i in 0...ps.length) {
+                var p = ps[i];
+                display[p.y][p.x]++;
+                ps[i] = ((p + vs[i]) % size + size) % size;
+            }
+
+            for (row in display) {
+                for (i in 0...row.length) {
+                    var v = row[i];
+                    Sys.print(v > 0 ? v : ' ');
+                    row[i] = 0;
+                }
+                Sys.println('');
+            }
+        } while (Sys.stdin().readLine().length == 0);
+
+        return count;
     }
 }
 
