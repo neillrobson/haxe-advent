@@ -100,17 +100,7 @@ class Day13 extends DayEngine {
         }
 
         var sum = matrices.fold((m, s) -> {
-            Sys.println('###############');
-
-            for (r in m)
-                Sys.println(r);
-            Sys.println('---------------');
-
             var badIdx = gaussJordan(m);
-
-            for (r in m)
-                Sys.println(r);
-            Sys.println(badIdx);
 
             var ab = optimize(m, badIdx);
 
@@ -181,6 +171,10 @@ function gcd(a, b) {
 function optimize(m:Vector<Vector<Int>>, n:Int):{a:Int, b:Int} {
     // Only one solution
     if (n < 0) {
+        // Non-integer solution
+        if ((m[0][2] % m[0][0] != 0) || (m[1][2] % m[1][1] != 0))
+            return {a: 0, b: 0};
+
         return {
             a: Std.int(m[0][2] / m[0][0]),
             b: Std.int(m[1][2] / m[1][1])
