@@ -65,10 +65,7 @@ abstract Addressable<T>(Vector<Vector<T>>) from Vector<Vector<T>> to Vector<Vect
 
 class Day15 extends DayEngine {
     public static function make(data:String) {
-        var tests:Array<TestData> = [
-            {data: testSmall, expected: [2028]},
-            // {data: testMedium, expected: [10092]}
-        ];
+        var tests:Array<TestData> = [{data: testSmall, expected: [2028]}, {data: testMedium, expected: [10092]}];
 
         new Day15(data, tests, false);
     }
@@ -103,26 +100,28 @@ class Day15 extends DayEngine {
             line = lines[k];
             for (j in 0...line.length) {
                 var dir = CHAR_VECS[line.charAt(j)];
-
                 pos = move(map, pos, dir);
-
-                for (y in 0...map.length) {
-                    var l = map[y];
-                    for (x in 0...l.length) {
-                        var c = l[x];
-                        if (c == 0)
-                            Sys.print('.');
-                        if (c == 1)
-                            Sys.print('O');
-                        if (c == 2)
-                            Sys.print('#');
-                    }
-                    Sys.println('');
-                }
             }
         }
 
-        return null;
+        var sum = 0;
+        for (y in 0...map.length) {
+            var l = map[y];
+            for (x in 0...l.length) {
+                var c = l[x];
+                if (c == 0)
+                    Sys.print('.');
+                if (c == 1) {
+                    Sys.print('O');
+                    sum += 100 * y + x;
+                }
+                if (c == 2)
+                    Sys.print('#');
+            }
+            Sys.println('');
+        }
+
+        return sum;
     }
 
     function problem2(data:String):Dynamic {
