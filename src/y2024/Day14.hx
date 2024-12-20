@@ -88,14 +88,15 @@ class Day14 extends DayEngine {
         for (i in 0...size.y)
             display[i] = new Vector(size.x, 0);
 
-        var count = 0;
+        var step = 58;
+        var count = -step;
         do {
-            ++count;
+            count += step;
 
             for (i in 0...ps.length) {
                 var p = ps[i];
                 display[p.y][p.x]++;
-                ps[i] = ((p + vs[i]) % size + size) % size;
+                ps[i] = move(p, vs[i], step, size);
             }
 
             for (row in display) {
