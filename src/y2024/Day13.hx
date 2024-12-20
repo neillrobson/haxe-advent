@@ -5,6 +5,9 @@ import Sure.sure;
 import haxe.ds.Vector;
 import util.Vec2;
 
+using Lambda;
+using StringTools;
+
 var testData = "Button A: X+94, Y+34
 Button B: X+22, Y+67
 Prize: X=8400, Y=5400
@@ -37,11 +40,7 @@ class Day13 extends DayEngine {
             Vector.fromArrayCopy([3., -6, 13, 8]),
         ]);
 
-        for (v in earlyBreak)
-            Sys.println(v);
         sure(gaussJordan(earlyBreak) == 1);
-        for (v in earlyBreak)
-            Sys.println(v);
 
         var ret = diophantine(258, 147, 369);
         sure(ret.v.x == 492);
@@ -53,11 +52,72 @@ class Day13 extends DayEngine {
         sure(ret.v.x == -861);
         sure(ret.r == 3);
 
+        var s = shiftSearch(6, -2, 5, 3);
+        sure(s.a == 1);
+        sure(s.b == 1);
+
+        s = shiftSearch(21, -11, 5, 3);
+        sure(s.a == 1);
+        sure(s.b == 1);
+
+        s = shiftSearch(10, 10, 5, 3);
+        sure(s.a == 25);
+        sure(s.b == 1);
+
         new Day13(data, tests, false);
     }
 
     function problem1(data:String):Dynamic {
-        return null;
+        var lines = data.split('\n').map(s -> s.trim()).filter(s -> s.length > 0);
+        var matrices:Array<Vector<Vector<Float>>> = [];
+
+        var lineA = ~/Button A: X\+(\d+), Y\+(\d+)/;
+        var lineB = ~/Button B: X\+(\d+), Y\+(\d+)/;
+        var lineP = ~/Prize: X=(\d+), Y=(\d+)/;
+
+        for (i in 0...Std.int(lines.length / 3)) {
+            var ix = i * 3;
+
+            var x:Vector<Float> = new Vector(3);
+            var y:Vector<Float> = new Vector(3);
+            var matrix = new Vector(2);
+            matrix[0] = x;
+            matrix[1] = y;
+
+            lineA.match(lines[ix]);
+            x[0] = Std.parseInt(lineA.matched(1));
+            y[0] = Std.parseInt(lineA.matched(2));
+
+            lineB.match(lines[ix + 1]);
+            x[1] = Std.parseInt(lineB.matched(1));
+            y[1] = Std.parseInt(lineB.matched(2));
+
+            lineP.match(lines[ix + 2]);
+            x[2] = Std.parseInt(lineP.matched(1));
+            y[2] = Std.parseInt(lineP.matched(2));
+
+            matrices.push(matrix);
+        }
+
+        var sum = matrices.fold((m, s) -> {
+            Sys.println('###############');
+
+            for (r in m)
+                Sys.println(r);
+            Sys.println('---------------');
+
+            var badIdx = gaussJordan(m);
+
+            for (r in m)
+                Sys.println(r);
+            Sys.println(badIdx);
+
+            var ab = optimize(m, badIdx);
+
+            return s + ab.a * 3 + ab.b;
+        }, 0);
+
+        return sum;
     }
 
     function problem2(data:String):Dynamic {
@@ -112,7 +172,7 @@ function gaussJordan(a:Vector<Vector<Float>>):Int {
  * @param a
  * @return Bool
  */
-function optimize(m:Vector<Vector<Int>>, n:Int):{a:Int, b:Int} {
+function optimize(m:Vector<Vector<Float>>, n:Int):{a:Int, b:Int} {
     // Only one solution
     if (n < 0) {
         return {
@@ -121,11 +181,15 @@ function optimize(m:Vector<Vector<Int>>, n:Int):{a:Int, b:Int} {
         }
     }
 
+    // No solutions due to bad row having non-zero C
+    if (m[n][2] != 0)
+        return {a: 0, b: 0};
+
     // Many solutions: optimize for b
     var row = m[1 - n];
-    var a = row[0];
-    var b = row[1];
-    var c = row[2];
+    var a = Std.int(row[0]);
+    var b = Std.int(row[1]);
+    var c = Std.int(row[2]);
 
     var ret = diophantine(a, b, c);
     if (ret == null)
@@ -141,19 +205,9 @@ function optimize(m:Vector<Vector<Int>>, n:Int):{a:Int, b:Int} {
  * Getting a and b to positive values, with b minimized.
  */
 function shiftSearch(a:Int, b:Int, aShift:Int, bShift:Int):{a:Int, b:Int} {
-    while (b < 0) {
-        b += bShift;
-        a -= aShift;
+    var diff = Std.int(b / bShift) - (b < 0 ? 1 : 0);
 
-        return {a: a, b: b};
-    }
-
-    while (b - bShift >= 0) {
-        b -= bShift;
-        a += aShift;
-    }
-
-    return {a: a, b: b};
+    return {a: a + aShift * diff, b: b - bShift * diff};
 }
 
 /**
