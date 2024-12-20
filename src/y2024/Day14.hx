@@ -91,10 +91,10 @@ class Day14 extends DayEngine {
         // 7371 ???
         // Weird pattern every 103 steps, starting at 58 steps
         var step = 103;
-        var count = 58 - step;
+        var count = 7371 - step;
 
         for (i in 0...ps.length) {
-            ps[i] = move(ps[i], vs[i], 58, size);
+            ps[i] = move(ps[i], vs[i], 7371, size);
         }
 
         while (true) {
