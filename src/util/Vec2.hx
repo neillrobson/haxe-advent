@@ -9,6 +9,11 @@ abstract Vec2(Vec2Data) from Vec2Data to Vec2Data {
         this = new Vec2Data(x, y);
     }
 
+    @:from
+    static inline function fromArray(a:Array<Int>) {
+        return new Vec2(a[0], a[1]);
+    }
+
     @:op(a + b)
     static inline function add(a:Vec2, b:Vec2):Vec2 {
         return new Vec2(a.x + b.x, a.y + b.y);
@@ -27,6 +32,11 @@ abstract Vec2(Vec2Data) from Vec2Data to Vec2Data {
     @:op(a * b) @:commutative
     static inline function multiplyScalar(a:Vec2, b:Int):Vec2 {
         return new Vec2(a.x * b, a.y * b);
+    }
+
+    @:op(a % b)
+    static inline function mod(a:Vec2, b:Vec2) {
+        return new Vec2(a.x % b.x, a.y % b.y);
     }
 
     @:op(a == b)
