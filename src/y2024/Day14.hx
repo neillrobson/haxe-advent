@@ -88,9 +88,16 @@ class Day14 extends DayEngine {
         for (i in 0...size.y)
             display[i] = new Vector(size.x, 0);
 
-        var step = 58;
-        var count = -step;
-        do {
+        // 7371 ???
+        // Weird pattern every 103 steps, starting at 58 steps
+        var step = 103;
+        var count = 58 - step;
+
+        for (i in 0...ps.length) {
+            ps[i] = move(ps[i], vs[i], 58, size);
+        }
+
+        while (true) {
             count += step;
 
             for (i in 0...ps.length) {
@@ -99,15 +106,42 @@ class Day14 extends DayEngine {
                 ps[i] = move(p, vs[i], step, size);
             }
 
+            var hasFullRow = false;
+            for (row in display) {
+                // var fullSoFar = true;
+                // for (v in row)
+                //     if (v == 0) {
+                //         fullSoFar = false;
+                //         break;
+                //     }
+
+                var sum = 0;
+                for (i in row)
+                    sum += i;
+                var fullSoFar = sum > 31;
+
+                if (fullSoFar) {
+                    hasFullRow = true;
+                    break;
+                }
+            }
+
             for (row in display) {
                 for (i in 0...row.length) {
                     var v = row[i];
-                    Sys.print(v > 0 ? v : ' ');
+                    if (hasFullRow)
+                        Sys.print(v > 0 ? v : ' ');
                     row[i] = 0;
                 }
-                Sys.println('');
+                if (hasFullRow)
+                    Sys.println('');
             }
-        } while (Sys.stdin().readLine().length == 0);
+
+            // Sys.print('$count ');
+
+            if (hasFullRow && Sys.stdin().readLine().length > 0)
+                break;
+        }
 
         return count;
     }
