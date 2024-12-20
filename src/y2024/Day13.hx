@@ -76,7 +76,7 @@ class Day13 extends DayEngine {
         sure(s.a == 0);
         sure(s.b == 16);
 
-        new Day13(data, tests, false);
+        new Day13(data, tests, true);
     }
 
     function problem1(data:String):Dynamic {
