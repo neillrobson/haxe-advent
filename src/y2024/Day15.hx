@@ -2,6 +2,7 @@ package y2024;
 
 import DayEngine.TestData;
 import haxe.ds.Vector;
+import util.HashSet;
 import util.Vec2;
 
 using StringTools;
@@ -145,6 +146,53 @@ function move(map:Addressable<Int>, pos:Vec2, dir:Vec2):Vec2 {
     if (push != hope) {
         map[hope] = 0;
         map[push] = 1;
+    }
+
+    return hope;
+}
+
+function moveWide(map:Addressable<Int>, pos:Vec2, dir:Vec2):Vec2 {
+    var hope = pos + dir;
+
+    var vecsToPush:Array<Vec2> = [];
+
+    var sets = [new HashSet<Vec2>(), new HashSet<Vec2>()];
+    var nextSetIdx = 0;
+    var activeSet = sets[nextSetIdx];
+    activeSet.set(hope);
+
+    while (activeSet.length > 0) {
+        nextSetIdx = 1 - nextSetIdx;
+        var nextSet = sets[nextSetIdx];
+
+        for (v in activeSet.values()) {
+            // Can't push due to a wall
+            if (map[v] == 2)
+                return pos;
+
+            // No action needed
+            if (map[v] == 0) {
+                continue;
+            }
+
+            vecsToPush.unshift(v);
+            nextSet.set(v + dir);
+
+            // Moving vertically
+            if (dir.y != 0) {
+                var buddy = v + [map[v] == 1 ? 1 : -1, 0];
+                if (nextSet.set(buddy + dir)) {
+                    vecsToPush.unshift(buddy);
+                }
+            }
+        }
+
+        activeSet.clear();
+        activeSet = nextSet;
+    }
+
+    for (v in vecsToPush) {
+        map[v + dir] = map[v];
     }
 
     return hope;
