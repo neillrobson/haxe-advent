@@ -164,7 +164,7 @@ class Day15 extends DayEngine {
                 Sys.stdin().readLine();
                 print(map, pos, line.charAt(j));
                 var dir = CHAR_VECS[line.charAt(j)];
-                pos = move(map, pos, dir);
+                pos = moveWide(map, pos, dir);
             }
         }
 
@@ -251,6 +251,7 @@ function moveWide(map:Addressable<Int>, pos:Vec2, dir:Vec2):Vec2 {
         var nextSet = sets[nextSetIdx];
 
         for (v in activeSet.values()) {
+            // Sys.println(map[v]);
             // Can't push due to a wall
             if (map[v] == 2)
                 return pos;
@@ -277,6 +278,7 @@ function moveWide(map:Addressable<Int>, pos:Vec2, dir:Vec2):Vec2 {
     }
 
     for (v in vecsToPush) {
+        // Sys.println('$v -> ${v + dir}');
         map[v + dir] = map[v];
     }
 
