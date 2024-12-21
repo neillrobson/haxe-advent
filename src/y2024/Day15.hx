@@ -66,9 +66,9 @@ abstract Addressable<T>(Vector<Vector<T>>) from Vector<Vector<T>> to Vector<Vect
 
 class Day15 extends DayEngine {
     public static function make(data:String) {
-        var tests:Array<TestData> = [{data: testSmall, expected: [2028]}, {data: testMedium, expected: [10092]}];
+        var tests:Array<TestData> = [{data: testSmall, expected: [2028]}, {data: testMedium, expected: [10092, 9021]}];
 
-        new Day15(data, tests, true);
+        new Day15(data, tests, false);
     }
 
     function problem1(data:String):Dynamic {
@@ -126,7 +126,86 @@ class Day15 extends DayEngine {
     }
 
     function problem2(data:String):Dynamic {
-        return null;
+        var lines = data.split('\n').map(s -> s.trim());
+
+        var mapData:Array<Vector<Int>> = [];
+
+        var pos:Vec2 = null;
+
+        var i = 0;
+        var line;
+        while ((line = lines[i++]).length > 0) {
+            var lineData = [];
+            for (j in 0...line.length) {
+                switch (line.charAt(j)) {
+                    case 'O':
+                        lineData.push(1);
+                        lineData.push(3);
+                    case '#':
+                        lineData.push(2);
+                        lineData.push(2);
+                    case '@':
+                        lineData.push(0);
+                        lineData.push(0);
+                        pos = [j, i - 1];
+                    default:
+                        lineData.push(0);
+                        lineData.push(0);
+                }
+            }
+            mapData.push(Vector.fromArrayCopy(lineData));
+        }
+
+        var map:Vector<Vector<Int>> = Vector.fromArrayCopy(mapData);
+
+        Sys.println('');
+        for (y in 0...map.length) {
+            var l = map[y];
+            for (x in 0...l.length) {
+                var c = l[x];
+                if (c == 0)
+                    Sys.print('.');
+                if (c == 1) {
+                    Sys.print('[');
+                    // sum += 100 * y + x;
+                }
+                if (c == 2)
+                    Sys.print('#');
+                if (c == 3)
+                    Sys.print(']');
+            }
+            Sys.println('');
+        }
+
+        for (k in i...lines.length) {
+            line = lines[k];
+            for (j in 0...line.length) {
+                var dir = CHAR_VECS[line.charAt(j)];
+                pos = move(map, pos, dir);
+            }
+        }
+
+        var sum = 0;
+        Sys.println('');
+        for (y in 0...map.length) {
+            var l = map[y];
+            for (x in 0...l.length) {
+                var c = l[x];
+                if (c == 0)
+                    Sys.print('.');
+                if (c == 1) {
+                    Sys.print('[');
+                    sum += 100 * y + x;
+                }
+                if (c == 2)
+                    Sys.print('#');
+                if (c == 3)
+                    Sys.print(']');
+            }
+            Sys.println('');
+        }
+
+        return sum;
     }
 }
 
