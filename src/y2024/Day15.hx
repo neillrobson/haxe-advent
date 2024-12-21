@@ -158,28 +158,11 @@ class Day15 extends DayEngine {
 
         var map:Vector<Vector<Int>> = Vector.fromArrayCopy(mapData);
 
-        Sys.println('');
-        for (y in 0...map.length) {
-            var l = map[y];
-            for (x in 0...l.length) {
-                var c = l[x];
-                if (c == 0)
-                    Sys.print('.');
-                if (c == 1) {
-                    Sys.print('[');
-                    // sum += 100 * y + x;
-                }
-                if (c == 2)
-                    Sys.print('#');
-                if (c == 3)
-                    Sys.print(']');
-            }
-            Sys.println('');
-        }
-
         for (k in i...lines.length) {
             line = lines[k];
             for (j in 0...line.length) {
+                Sys.stdin().readLine();
+                print(map, pos, line.charAt(j));
                 var dir = CHAR_VECS[line.charAt(j)];
                 pos = move(map, pos, dir);
             }
@@ -206,6 +189,29 @@ class Day15 extends DayEngine {
         }
 
         return sum;
+    }
+}
+
+function print(map:Vector<Vector<Int>>, pos:Vec2, dir:String) {
+    Sys.println(dir);
+    for (y in 0...map.length) {
+        var l = map[y];
+        for (x in 0...l.length) {
+            var c = l[x];
+            if (c == 0) {
+                if (pos.x == x && pos.y == y)
+                    Sys.print('@');
+                else
+                    Sys.print('.');
+            }
+            if (c == 1)
+                Sys.print('[');
+            if (c == 2)
+                Sys.print('#');
+            if (c == 3)
+                Sys.print(']');
+        }
+        Sys.println('');
     }
 }
 
