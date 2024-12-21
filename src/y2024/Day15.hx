@@ -68,7 +68,7 @@ class Day15 extends DayEngine {
     public static function make(data:String) {
         var tests:Array<TestData> = [{data: testSmall, expected: [2028]}, {data: testMedium, expected: [10092, 9021]}];
 
-        new Day15(data, tests, false);
+        new Day15(data, tests, true);
     }
 
     function problem1(data:String):Dynamic {
@@ -110,16 +110,16 @@ class Day15 extends DayEngine {
             var l = map[y];
             for (x in 0...l.length) {
                 var c = l[x];
-                if (c == 0)
-                    Sys.print('.');
+                // if (c == 0)
+                //     Sys.print('.');
                 if (c == 1) {
-                    Sys.print('O');
+                    // Sys.print('O');
                     sum += 100 * y + x;
                 }
-                if (c == 2)
-                    Sys.print('#');
+                // if (c == 2)
+                //     Sys.print('#');
             }
-            Sys.println('');
+            // Sys.println('');
         }
 
         return sum;
@@ -169,23 +169,23 @@ class Day15 extends DayEngine {
         }
 
         var sum = 0;
-        Sys.println('');
+        // Sys.println('');
         for (y in 0...map.length) {
             var l = map[y];
             for (x in 0...l.length) {
                 var c = l[x];
-                if (c == 0)
-                    Sys.print('.');
+                // if (c == 0)
+                // Sys.print('.');
                 if (c == 1) {
-                    Sys.print('[');
+                    // Sys.print('[');
                     sum += 100 * y + x;
                 }
-                if (c == 2)
-                    Sys.print('#');
-                if (c == 3)
-                    Sys.print(']');
+                // if (c == 2)
+                // Sys.print('#');
+                // if (c == 3)
+                // Sys.print(']');
             }
-            Sys.println('');
+            // Sys.println('');
         }
 
         return sum;
