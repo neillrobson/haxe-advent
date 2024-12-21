@@ -282,5 +282,11 @@ function moveWide(map:Addressable<Int>, pos:Vec2, dir:Vec2):Vec2 {
         map[v + dir] = map[v];
     }
 
+    if (dir.y != 0 && map[hope] != 0) {
+        var buddy = hope + [map[hope] == 1 ? 1 : -1, 0];
+        map[buddy] = 0;
+    }
+    map[hope] = 0;
+
     return hope;
 }
