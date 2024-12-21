@@ -147,7 +147,7 @@ class Day15 extends DayEngine {
                     case '@':
                         lineData.push(0);
                         lineData.push(0);
-                        pos = [j, i - 1];
+                        pos = [j * 2, i - 1];
                     default:
                         lineData.push(0);
                         lineData.push(0);
@@ -161,8 +161,8 @@ class Day15 extends DayEngine {
         for (k in i...lines.length) {
             line = lines[k];
             for (j in 0...line.length) {
-                Sys.stdin().readLine();
-                print(map, pos, line.charAt(j));
+                // Sys.stdin().readLine();
+                // print(map, pos, line.charAt(j));
                 var dir = CHAR_VECS[line.charAt(j)];
                 pos = moveWide(map, pos, dir);
             }
@@ -251,7 +251,6 @@ function moveWide(map:Addressable<Int>, pos:Vec2, dir:Vec2):Vec2 {
         var nextSet = sets[nextSetIdx];
 
         for (v in activeSet.values()) {
-            // Sys.println(map[v]);
             // Can't push due to a wall
             if (map[v] == 2)
                 return pos;
@@ -261,8 +260,8 @@ function moveWide(map:Addressable<Int>, pos:Vec2, dir:Vec2):Vec2 {
                 continue;
             }
 
-            vecsToPush.unshift(v);
-            nextSet.set(v + dir);
+            if (nextSet.set(v + dir))
+                vecsToPush.unshift(v);
 
             // Moving vertically
             if (dir.y != 0) {
@@ -278,15 +277,15 @@ function moveWide(map:Addressable<Int>, pos:Vec2, dir:Vec2):Vec2 {
     }
 
     for (v in vecsToPush) {
-        // Sys.println('$v -> ${v + dir}');
         map[v + dir] = map[v];
+        map[v] = 0;
     }
 
-    if (dir.y != 0 && map[hope] != 0) {
-        var buddy = hope + [map[hope] == 1 ? 1 : -1, 0];
-        map[buddy] = 0;
-    }
-    map[hope] = 0;
+    // if (dir.y != 0 && map[hope] != 0) {
+    //     var buddy = hope + [map[hope] == 1 ? 1 : -1, 0];
+    //     map[buddy] = 0;
+    // }
+    // map[hope] = 0;
 
     return hope;
 }
