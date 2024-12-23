@@ -71,7 +71,7 @@ class Day15 extends DayEngine {
         new Day15(data, tests, true);
     }
 
-    function problem1(data:String):Dynamic {
+    function problem1(data:String):Any {
         var lines = data.split('\n').map(s -> s.trim());
 
         var mapData:Array<Vector<Int>> = [];
@@ -125,7 +125,7 @@ class Day15 extends DayEngine {
         return sum;
     }
 
-    function problem2(data:String):Dynamic {
+    function problem2(data:String):Any {
         var lines = data.split('\n').map(s -> s.trim());
 
         var mapData:Array<Vector<Int>> = [];

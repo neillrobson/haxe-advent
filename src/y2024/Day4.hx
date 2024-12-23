@@ -19,14 +19,12 @@ MXMXAXMASX
 
 class Day4 extends DayEngine {
     public static function make(data:String) {
-        var tests:Array<TestData> = [
-            { data: testData, expected: [18, 9] }
-        ];
+        var tests:Array<TestData> = [{data: testData, expected: [18, 9]}];
 
         new Day4(data, tests);
     }
 
-    function problem1(data:String):Dynamic {
+    function problem1(data:String):Any {
         var matrix = new StringMatrix(data);
 
         var count = 0;
@@ -38,21 +36,15 @@ class Day4 extends DayEngine {
         return count;
     }
 
-    function problem2(data:String):Dynamic {
+    function problem2(data:String):Any {
         var matrix = data.split('\n').filter((line) -> line.length > 0);
         var count = 0;
 
         for (y in 1...matrix.length - 1) {
             for (x in 1...matrix[0].length - 1) {
-                if (
-                    checkXMAS(
-                        matrix[y].charAt(x),
-                        matrix[y-1].charAt(x-1),
-                        matrix[y-1].charAt(x+1),
-                        matrix[y+1].charAt(x-1),
-                        matrix[y+1].charAt(x+1)
-                    )
-                ) count++;
+                if (checkXMAS(matrix[y].charAt(x), matrix[y - 1].charAt(x - 1), matrix[y - 1].charAt(x + 1), matrix[y + 1].charAt(x - 1),
+                    matrix[y + 1].charAt(x + 1)))
+                    count++;
             }
         }
 
@@ -61,17 +53,25 @@ class Day4 extends DayEngine {
 }
 
 function checkXMAS(c:String, tl:String, tr:String, bl:String, br:String) {
-    if (c != "A") return false;
+    if (c != "A")
+        return false;
 
-    if (!"MS".contains(tl)) return false;
-    if (!"MS".contains(tr)) return false;
-    if (!"MS".contains(bl)) return false;
-    if (!"MS".contains(br)) return false;
+    if (!"MS".contains(tl))
+        return false;
+    if (!"MS".contains(tr))
+        return false;
+    if (!"MS".contains(bl))
+        return false;
+    if (!"MS".contains(br))
+        return false;
 
-    if (tl != tr && tl != bl) return false;
-    if (br != tr && br != bl) return false;
+    if (tl != tr && tl != bl)
+        return false;
+    if (br != tr && br != bl)
+        return false;
 
-    if (tl == br) return false;
+    if (tl == br)
+        return false;
 
     return true;
 }
@@ -144,7 +144,7 @@ class StringMatrix {
             **/
 
             var offset = Std.int(Math.max(i - data.length + 1, 0));
-            var rows = [for (j in -startRow...-endRow) data[-j]];
+            var rows = [for (j in -startRow... -endRow) data[-j]];
 
             for (idx => row in rows)
                 line.addChar(row.fastCodeAt(offset + idx));
@@ -182,7 +182,7 @@ function findMatches(search:String, data:Array<String>) {
 function reverse(s:String):String {
     var ret = new StringBuf();
 
-    for (i in -s.length+1...1)
+    for (i in -s.length + 1...1)
         ret.addChar(s.fastCodeAt(-i));
 
     return ret.toString();

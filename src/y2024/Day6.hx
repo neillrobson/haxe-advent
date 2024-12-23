@@ -17,7 +17,6 @@ var testData = "....#.....
 #.........
 ......#...
 ";
-
 var test2 = "
 .......#.......
 .#..........#..
@@ -39,15 +38,12 @@ enum Dir {
 
 class Day6 extends DayEngine {
     public static function make(data:String) {
-        var tests:Array<TestData> = [
-            { data: testData, expected: [41, 6] },
-            { data: test2, expected: [null, 6] },
-        ];
+        var tests:Array<TestData> = [{data: testData, expected: [41, 6]}, {data: test2, expected: [null, 6]},];
 
         new Day6(data, tests, true);
     }
 
-    function problem1(data:String):Dynamic {
+    function problem1(data:String):Any {
         var lines = data.split('\n').map(s -> s.trim()).filter(s -> s.length != 0);
         var map:Array<Array<Int>> = [];
         var x:Int = -1, y:Int = -1;
@@ -136,7 +132,7 @@ class Day6 extends DayEngine {
         return count;
     }
 
-    function problem2(data:String):Dynamic {
+    function problem2(data:String):Any {
         var lines = data.split('\n').map(s -> s.trim()).filter(s -> s.length != 0);
         var map:Array<Array<Int>> = [];
         var x:Int = -1, y:Int = -1;
@@ -178,7 +174,8 @@ class Day6 extends DayEngine {
                         dir = Dir.RIGHT;
                     else {
                         if (checkLoop(map, dir, y, x)) {
-                            if (blocks[newY][x]++ < 1) count++;
+                            if (blocks[newY][x]++ < 1)
+                                count++;
                         }
                         y = newY;
                         map[y][x] |= 1;
@@ -191,7 +188,8 @@ class Day6 extends DayEngine {
                         dir = Dir.DOWN;
                     else {
                         if (checkLoop(map, dir, y, x)) {
-                            if (blocks[y][newX]++ < 1) count++;
+                            if (blocks[y][newX]++ < 1)
+                                count++;
                         }
                         x = newX;
                         map[y][x] |= 2;
@@ -204,7 +202,8 @@ class Day6 extends DayEngine {
                         dir = Dir.LEFT;
                     else {
                         if (checkLoop(map, dir, y, x)) {
-                            if (blocks[newY][x]++ < 1) count++;
+                            if (blocks[newY][x]++ < 1)
+                                count++;
                         }
                         y = newY;
                         map[y][x] |= 4;
@@ -217,7 +216,8 @@ class Day6 extends DayEngine {
                         dir = Dir.UP;
                     else {
                         if (checkLoop(map, dir, y, x)) {
-                            if (blocks[y][newX]++ < 1) count++;
+                            if (blocks[y][newX]++ < 1)
+                                count++;
                         }
                         x = newX;
                         map[y][x] |= 8;
@@ -250,7 +250,8 @@ function checkLoop(map:Array<Array<Int>>, dir:Dir, y:Int, x:Int):Bool {
     }
 
     // We can't put a barrier here because the guard's path previously went through here
-    if (dirs[by][bx] != 0) return false;
+    if (dirs[by][bx] != 0)
+        return false;
 
     while (true) {
         switch (dir) {
@@ -262,7 +263,8 @@ function checkLoop(map:Array<Array<Int>>, dir:Dir, y:Int, x:Int):Bool {
                     dir = Dir.RIGHT;
                 else {
                     y = newY;
-                    if (dirs[y][x] & 1 > 0) return true;
+                    if (dirs[y][x] & 1 > 0)
+                        return true;
                     dirs[y][x] |= 1;
                 }
             case Dir.RIGHT:
@@ -273,7 +275,8 @@ function checkLoop(map:Array<Array<Int>>, dir:Dir, y:Int, x:Int):Bool {
                     dir = Dir.DOWN;
                 else {
                     x = newX;
-                    if (dirs[y][x] & 2 > 0) return true;
+                    if (dirs[y][x] & 2 > 0)
+                        return true;
                     dirs[y][x] |= 2;
                 }
             case Dir.DOWN:
@@ -284,7 +287,8 @@ function checkLoop(map:Array<Array<Int>>, dir:Dir, y:Int, x:Int):Bool {
                     dir = Dir.LEFT;
                 else {
                     y = newY;
-                    if (dirs[y][x] & 4 > 0) return true;
+                    if (dirs[y][x] & 4 > 0)
+                        return true;
                     dirs[y][x] |= 4;
                 }
             case Dir.LEFT:
@@ -295,7 +299,8 @@ function checkLoop(map:Array<Array<Int>>, dir:Dir, y:Int, x:Int):Bool {
                     dir = Dir.UP;
                 else {
                     x = newX;
-                    if (dirs[y][x] & 8 > 0) return true;
+                    if (dirs[y][x] & 8 > 0)
+                        return true;
                     dirs[y][x] |= 8;
                 }
         }

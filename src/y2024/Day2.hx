@@ -22,10 +22,12 @@ function signum(a:Int):Int {
 
 function checkPairs(data:Array<Int>):Bool {
     var signa = data.map(signum);
-    if (signa.exists((i) -> i != signa[0])) return false;
+    if (signa.exists((i) -> i != signa[0]))
+        return false;
 
     var mags = data.map(Math.abs);
-    if (mags.exists((i) -> i < 1 || i > 3)) return false;
+    if (mags.exists((i) -> i < 1 || i > 3))
+        return false;
 
     return true;
 }
@@ -35,7 +37,7 @@ function scanStrict(data:Array<Int>):Bool {
         return true;
     }
 
-    var pairs = [for (i in 1...data.length) data[i] - data[i-1]];
+    var pairs = [for (i in 1...data.length) data[i] - data[i - 1]];
 
     return checkPairs(pairs);
 }
@@ -45,13 +47,10 @@ function scanTolerant(data:Array<Int>):Bool {
         return true;
     }
 
-    var pairs = [for (i in 1...data.length) data[i] - data[i-1]];
+    var pairs = [for (i in 1...data.length) data[i] - data[i - 1]];
 
     // We should never see "zero" here, because of the magnitude requirement
-    var sigIndexes = [
-        -1 => -1,
-        1 => -1
-    ];
+    var sigIndexes = [-1 => -1, 1 => -1];
     var mainSig:Null<Int> = null;
     var outlierIdx = -1;
 
@@ -66,7 +65,8 @@ function scanTolerant(data:Array<Int>):Bool {
         if (mainSig == null && sigIndexes[sig] >= 0) {
             mainSig = sig;
             outlierIdx = sigIndexes[-sig];
-            if (outlierIdx >= 0) break;
+            if (outlierIdx >= 0)
+                break;
         }
         if (mainSig != null && mainSig != sig) {
             outlierIdx = i;
@@ -75,7 +75,8 @@ function scanTolerant(data:Array<Int>):Bool {
         sigIndexes[sig] = i;
     }
 
-    if (outlierIdx < 0) return true;
+    if (outlierIdx < 0)
+        return true;
 
     var ret = false;
 
@@ -111,28 +112,28 @@ function scanTolerant(data:Array<Int>):Bool {
 class Day2 extends DayEngine {
     public static function make(data:String) {
         var tests:Array<TestData> = [
-            { data: testData, expected: [2, 4] },
-            { data: '7 8 6 5 4', expected: [0, 1]},
-            { data: '6 8 6 5 4', expected: [0, 1]},
-            { data: '8 7 6 5 6', expected: [0, 1]},
-            { data: '7 6 5 6 4', expected: [0, 1]},
+            {data: testData, expected: [2, 4]},
+            {data: '7 8 6 5 4', expected: [0, 1]},
+            {data: '6 8 6 5 4', expected: [0, 1]},
+            {data: '8 7 6 5 6', expected: [0, 1]},
+            {data: '7 6 5 6 4', expected: [0, 1]},
 
-            { data: '8 7 4 7 5', expected: [0, 0]},
-            { data: '8 7 4 7 3', expected: [0, 1]},
-            { data: '8 7 4 6 5', expected: [0, 1]},
-            { data: '8 7 4 6 3', expected: [0, 1]},
+            {data: '8 7 4 7 5', expected: [0, 0]},
+            {data: '8 7 4 7 3', expected: [0, 1]},
+            {data: '8 7 4 6 5', expected: [0, 1]},
+            {data: '8 7 4 6 3', expected: [0, 1]},
 
-            { data: '4 5 7 10 9', expected: [0, 1]},
-            { data: '3 4 5 10 7', expected: [0, 1]},
+            {data: '4 5 7 10 9', expected: [0, 1]},
+            {data: '3 4 5 10 7', expected: [0, 1]},
 
-            { data: '50 48 48 46 44', expected: [0, 1]},
-            { data: '58 57 58 56 54', expected: [0, 1]},
+            {data: '50 48 48 46 44', expected: [0, 1]},
+            {data: '58 57 58 56 54', expected: [0, 1]},
         ];
 
         new Day2(data, tests);
     }
 
-    function problem1(data:String):Dynamic {
+    function problem1(data:String):Any {
         var validCount = 0;
 
         for (line in data.split("\n")) {
@@ -150,7 +151,7 @@ class Day2 extends DayEngine {
         return validCount;
     }
 
-    function problem2(data:String):Dynamic {
+    function problem2(data:String):Any {
         var validCount = 0;
 
         for (line in data.split("\n")) {

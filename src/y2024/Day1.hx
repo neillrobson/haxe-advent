@@ -14,14 +14,12 @@ var testData = '3   4
 
 class Day1 extends DayEngine {
     public static function make(data:String) {
-        var tests:Array<TestData> = [
-            { data: testData, expected: [11, 31] }
-        ];
+        var tests:Array<TestData> = [{data: testData, expected: [11, 31]}];
 
         new Day1(data, tests);
     }
 
-    function problem1(data:String):Dynamic {
+    function problem1(data:String):Any {
         var first:Array<Int> = [];
         var second:Array<Int> = [];
 
@@ -45,7 +43,7 @@ class Day1 extends DayEngine {
         return result;
     }
 
-    function problem2(data:String):Dynamic {
+    function problem2(data:String):Any {
         var firstList:Array<Int> = [];
         var secondMap = new Map<Int, Int>();
 

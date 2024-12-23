@@ -80,7 +80,7 @@ class Day13 extends DayEngine {
         new Day13(data, tests, true);
     }
 
-    function problem1(data:String):Dynamic {
+    function problem1(data:String):Any {
         var lines = data.split('\n').map(s -> s.trim()).filter(s -> s.length > 0);
         var matrices:Array<Vector<Vector<Int64>>> = [];
 
@@ -123,7 +123,7 @@ class Day13 extends DayEngine {
         return sum.toStr();
     }
 
-    function problem2(data:String):Dynamic {
+    function problem2(data:String):Any {
         var lines = data.split('\n').map(s -> s.trim()).filter(s -> s.length > 0);
         var matrices:Array<Vector<Vector<Int64>>> = [];
 

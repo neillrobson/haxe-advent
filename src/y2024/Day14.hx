@@ -32,7 +32,7 @@ class Day14 extends DayEngine {
         new Day14(data, tests, true);
     }
 
-    function problem1(data:String):Dynamic {
+    function problem1(data:String):Any {
         var lines = data.split('\n').map(s -> s.trim()).filter(s -> s.length > 0);
 
         var regex = ~/p=(\d+),(\d+) v=(-?\d+),(-?\d+)/;
@@ -68,7 +68,7 @@ class Day14 extends DayEngine {
         return quadCounts.fold((i, r) -> i * r, 1);
     }
 
-    function problem2(data:String):Dynamic {
+    function problem2(data:String):Any {
         var lines = data.split('\n').map(s -> s.trim()).filter(s -> s.length > 0);
 
         var regex = ~/p=(\d+),(\d+) v=(-?\d+),(-?\d+)/;

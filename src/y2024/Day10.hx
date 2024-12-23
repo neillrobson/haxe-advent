@@ -24,7 +24,7 @@ class Day10 extends DayEngine {
         new Day10(data, tests, true);
     }
 
-    function problem1(data:String):Dynamic {
+    function problem1(data:String):Any {
         var map:Array<Array<Int>> = data.split('\n').map(s -> s.trim()).filter(s -> s.length > 0).map(s -> {
             var arr = [];
             for (i in 0...s.length)
@@ -43,7 +43,7 @@ class Day10 extends DayEngine {
         return sum;
     }
 
-    function problem2(data:String):Dynamic {
+    function problem2(data:String):Any {
         var map:Array<Array<Int>> = data.split('\n').map(s -> s.trim()).filter(s -> s.length > 0).map(s -> {
             var arr = [];
             for (i in 0...s.length)

@@ -1,6 +1,7 @@
 package y2024;
 
 import DayEngine.TestData;
+import haxe.Int64;
 import haxe.ds.Vector;
 import util.Heap;
 
@@ -43,17 +44,24 @@ var test2 = "
 
 class Day16 extends DayEngine {
     public static function make(data:String) {
-        var tests:Array<TestData> = [{data: test1, expected: [7036]}, {data: test2, expected: [11048]}];
+        var tests:Array<TestData> = [{data: test1, expected: [7036i64]}, {data: test2, expected: [11048i64]}];
 
         new Day16(data, tests, false);
     }
 
-    function problem1(data:String):Dynamic {
+    function problem1(data:String):Any {
         var lines = data.split('\n').map(s -> s.trim()).filter(s -> s.length > 0);
 
         var nodeMap:Vector<Vector<Vector<Node>>> = new Vector(lines.length);
 
-        var nodeHeap:Heap<Edge> = new Heap((a:Edge, b:Edge) -> a.d - b.d);
+        var nodeHeap:Heap<Edge> = new Heap((a:Edge, b:Edge) -> {
+            var diff = a.d - b.d;
+            if (diff == 0)
+                return 0;
+            if (diff < 0)
+                return -1;
+            return 1;
+        });
 
         for (i => line in lines) {
             var nodes = new Vector(line.length);
@@ -98,14 +106,14 @@ class Day16 extends DayEngine {
         return curr.d;
     }
 
-    function problem2(data:String):Dynamic {
+    function problem2(data:String):Any {
         return null;
     }
 }
 
 typedef Edge = {
     var n:Node;
-    var d:Int;
+    var d:Int64;
 }
 
 class Node {

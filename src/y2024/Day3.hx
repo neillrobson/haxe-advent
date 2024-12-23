@@ -10,7 +10,8 @@ function postProcess(data:Array<String>):Int {
     var mulRegex = ~/mul\((\d+),(\d+)\)/;
 
     return data.fold((item, result) -> {
-        if (!mulRegex.match(item)) return result;
+        if (!mulRegex.match(item))
+            return result;
 
         var a = Std.parseInt(mulRegex.matched(1));
         var b = Std.parseInt(mulRegex.matched(2));
@@ -22,20 +23,20 @@ function postProcess(data:Array<String>):Int {
 class Day3 extends DayEngine {
     public static function make(data:String) {
         var tests:Array<TestData> = [
-            { data: testData, expected: [161, 161] },
-            { data: "xmul(2,4)&mul[3,7]!^don't()_mul(5,5)+mul(32,64](mul(11,8)undo()?mul(8,5))", expected: [161, 48] },
-            { data: "mul(2,4),mul(5,5),mul(11,8),mul(8,5)", expected: [161, 161] },
-            { data: "mumul(2,4),mul(5,5),mul(11,8),mul(8,5)", expected: [161, 161] },
-            { data: "mudon't()l(8,5)", expected: [0, 0] },
-            { data: "mudo()l(8,5)", expected: [0, 0] },
-            { data: "mul(8,5)don't()do()mul(8,5)", expected: [80, 80] },
-            { data: "mul(8,5)don't()do(')mul(8,5)", expected: [80, 40] },
+            {data: testData, expected: [161, 161]},
+            {data: "xmul(2,4)&mul[3,7]!^don't()_mul(5,5)+mul(32,64](mul(11,8)undo()?mul(8,5))", expected: [161, 48]},
+            {data: "mul(2,4),mul(5,5),mul(11,8),mul(8,5)", expected: [161, 161]},
+            {data: "mumul(2,4),mul(5,5),mul(11,8),mul(8,5)", expected: [161, 161]},
+            {data: "mudon't()l(8,5)", expected: [0, 0]},
+            {data: "mudo()l(8,5)", expected: [0, 0]},
+            {data: "mul(8,5)don't()do()mul(8,5)", expected: [80, 80]},
+            {data: "mul(8,5)don't()do(')mul(8,5)", expected: [80, 40]},
         ];
 
         new Day3(data, tests);
     }
 
-    function problem1(data:String):Dynamic {
+    function problem1(data:String):Any {
         var charArr = ['', 'm', 'u', 'l', '(', '0123456789', ',', ')'];
 
         var states:Array<Array<Array<Int>>> = [];
@@ -44,9 +45,12 @@ class Day3 extends DayEngine {
         for (i in 0...9) {
             var row = [];
             for (j in 0...charArr.length) {
-                if (j == 1) row.push([1, 1]);
-                else if (i == 8) row.push([0, 3]);
-                else row.push([0, 0]);
+                if (j == 1)
+                    row.push([1, 1]);
+                else if (i == 8)
+                    row.push([0, 3]);
+                else
+                    row.push([0, 0]);
             }
             states.push(row);
         }
@@ -69,7 +73,7 @@ class Day3 extends DayEngine {
         return postProcess(res);
     }
 
-    function problem2(data:String):Dynamic {
+    function problem2(data:String):Any {
         var charArr = ['', 'm', 'u', 'l', '(', '0123456789', ',', ')', 'd', 'o', 'n', "'", 't'];
 
         var states:Array<Array<Array<Int>>> = [];
@@ -79,14 +83,20 @@ class Day3 extends DayEngine {
             for (j in 0...charArr.length) {
                 if (i < 15) {
                     // Allow for "mul" and "don't"
-                    if (j == 1) row.push([1, 1]);
-                    else if (j == 8) row.push([9, 0]);
-                    else if (i == 8) row.push([0, 3]);
-                    else row.push([0, 0]);
+                    if (j == 1)
+                        row.push([1, 1]);
+                    else if (j == 8)
+                        row.push([9, 0]);
+                    else if (i == 8)
+                        row.push([0, 3]);
+                    else
+                        row.push([0, 0]);
                 } else {
                     // Allow for "do"
-                    if (j == 8) row.push([16, 0]);
-                    else row.push([15, 0]);
+                    if (j == 8)
+                        row.push([16, 0]);
+                    else
+                        row.push([15, 0]);
                 }
             }
             states.push(row);
@@ -138,6 +148,7 @@ class FSM {
         6: Stop
     **/
     final states:Array<Array<Array<Int>>>;
+
     final charMap:Map<String, Int>;
 
     public function new(states:Array<Array<Array<Int>>>, charArr:Array<String>) {
@@ -145,7 +156,8 @@ class FSM {
 
         var charMap:Map<String, Int> = [];
         for (i => v in charArr) {
-            for (ci in 0...v.length) charMap[v.charAt(ci)] = i;
+            for (ci in 0...v.length)
+                charMap[v.charAt(ci)] = i;
         };
 
         this.charMap = charMap;
@@ -161,7 +173,8 @@ class FSM {
 
         for (i in 0...data.length + 1) {
             var c = i == data.length ? 0 : charMap[data.charAt(i)];
-            if (c == null) c = 0;
+            if (c == null)
+                c = 0;
 
             var state = states[r][c];
             r = state[0];

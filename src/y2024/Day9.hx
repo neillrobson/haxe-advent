@@ -51,7 +51,7 @@ class Day9 extends DayEngine {
         new Day9(data, tests, true);
     }
 
-    function problem1(data:String):Dynamic {
+    function problem1(data:String):Any {
         var d = data.trim();
         var disk:Vector<Int> = new Vector(d.length);
         for (i in 0...disk.length)
@@ -106,7 +106,7 @@ class Day9 extends DayEngine {
         return sum.toStr();
     }
 
-    function problem2(data:String):Dynamic {
+    function problem2(data:String):Any {
         // Linked list of pairs: [index, width]
         // Empty spaces are always *odd* indexes
         // Heaps of empty spaces per width

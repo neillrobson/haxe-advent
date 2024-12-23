@@ -26,7 +26,7 @@ class Day11 extends DayEngine {
         new Day11(data, tests, true);
     }
 
-    function problem1(data:String):Dynamic {
+    function problem1(data:String):Any {
         var map = data.split(' ').map(s -> s.trim()).filter(s -> s.length > 0).fold((s, map) -> {
             add(map, Int64.parseString(s), 1);
 
@@ -43,7 +43,7 @@ class Day11 extends DayEngine {
         return sum.toStr();
     }
 
-    function problem2(data:String):Dynamic {
+    function problem2(data:String):Any {
         var map = data.split(' ').map(s -> s.trim()).filter(s -> s.length > 0).fold((s, map) -> {
             add(map, Int64.parseString(s), 1);
 
