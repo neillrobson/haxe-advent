@@ -46,7 +46,7 @@ class Day16 extends DayEngine {
     public static function make(data:String) {
         var tests:Array<TestData> = [{data: test1, expected: [7036i64]}, {data: test2, expected: [11048i64]}];
 
-        new Day16(data, tests, false);
+        new Day16(data, tests, true);
     }
 
     function problem1(data:String):Any {
@@ -63,6 +63,8 @@ class Day16 extends DayEngine {
             return 1;
         });
 
+        var nodeCount = 0;
+
         for (i => line in lines) {
             var nodes = new Vector(line.length);
 
@@ -71,7 +73,8 @@ class Day16 extends DayEngine {
                 if (c == '#')
                     continue;
 
-                var quad = createNodeQuad(c == 'E');
+                var quad = createNodeQuad(i, j, c == 'E');
+                nodeCount += 4;
 
                 if (i > 0 && nodeMap[i - 1][j] != null) {
                     var northQuad:Quad = nodeMap[i - 1][j];
@@ -97,10 +100,15 @@ class Day16 extends DayEngine {
 
         do {
             curr = nodeHeap.pop();
-            curr.n.visited = true;
             for (e in curr.n.edges)
                 if (!e.n.visited)
                     nodeHeap.push({n: e.n, d: e.d + curr.d});
+
+            var quad:Quad = nodeMap[curr.n.i][curr.n.j];
+            quad.north.visited = true;
+            quad.east.visited = true;
+            quad.south.visited = true;
+            quad.west.visited = true;
         } while (!curr.n.terminal);
 
         return curr.d;
@@ -117,11 +125,15 @@ typedef Edge = {
 }
 
 class Node {
+    public final i:Int;
+    public final j:Int;
     public final edges:Array<Edge> = [];
     public final terminal:Bool;
     public var visited = false;
 
-    public function new(terminal:Bool = false) {
+    public function new(i, j, terminal:Bool = false) {
+        this.i = i;
+        this.j = j;
         this.terminal = terminal;
     }
 }
@@ -164,11 +176,11 @@ abstract Quad(Vector<Node>) from Vector<Node> to Vector<Node> {
     }
 }
 
-function createNodeQuad(terminal:Bool):Quad {
-    var north = new Node(terminal);
-    var east = new Node(terminal);
-    var south = new Node(terminal);
-    var west = new Node(terminal);
+function createNodeQuad(i, j, terminal:Bool):Quad {
+    var north = new Node(i, j, terminal);
+    var east = new Node(i, j, terminal);
+    var south = new Node(i, j, terminal);
+    var west = new Node(i, j, terminal);
 
     north.edges.push({n: east, d: 1000});
     north.edges.push({n: south, d: 1000});
