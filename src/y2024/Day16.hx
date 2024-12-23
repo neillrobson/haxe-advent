@@ -1,7 +1,6 @@
 package y2024;
 
 import DayEngine.TestData;
-import haxe.Int64;
 import haxe.ds.Vector;
 import util.Heap;
 
@@ -44,7 +43,7 @@ var test2 = "
 
 class Day16 extends DayEngine {
     public static function make(data:String) {
-        var tests:Array<TestData> = [{data: test1, expected: [7036i64, 45]}, {data: test2, expected: [11048i64, 64]}];
+        var tests:Array<TestData> = [{data: test1, expected: [7036, 45]}, {data: test2, expected: [11048, 64]}];
 
         new Day16(data, tests, true);
     }
@@ -101,28 +100,93 @@ class Day16 extends DayEngine {
         do {
             curr = nodeHeap.pop();
             for (e in curr.n.edges)
-                if (!e.n.visited)
+                if (e.n.visitedAt < 0)
                     nodeHeap.push({n: e.n, d: e.d + curr.d, p: curr});
 
             var quad:Quad = nodeMap[curr.n.i][curr.n.j];
-            quad.north.visited = true;
-            quad.east.visited = true;
-            quad.south.visited = true;
-            quad.west.visited = true;
+            quad.north.visitedAt = curr.d;
+            quad.east.visitedAt = curr.d;
+            quad.south.visitedAt = curr.d;
+            quad.west.visitedAt = curr.d;
         } while (!curr.n.terminal);
 
         return curr.d;
     }
 
     function problem2(data:String):Any {
-        return null;
+        var lines = data.split('\n').map(s -> s.trim()).filter(s -> s.length > 0);
+
+        var nodeMap:Vector<Vector<Vector<Node>>> = new Vector(lines.length);
+
+        var nodeHeap:Heap<Edge> = new Heap((a:Edge, b:Edge) -> {
+            var diff = a.d - b.d;
+            if (diff == 0)
+                return 0;
+            if (diff < 0)
+                return -1;
+            return 1;
+        });
+
+        var nodeCount = 0;
+
+        for (i => line in lines) {
+            var nodes = new Vector(line.length);
+
+            for (j in 0...line.length) {
+                var c = line.charAt(j);
+                if (c == '#')
+                    continue;
+
+                var quad = createNodeQuad(i, j, c == 'E');
+                nodeCount += 4;
+
+                if (i > 0 && nodeMap[i - 1][j] != null) {
+                    var northQuad:Quad = nodeMap[i - 1][j];
+                    northQuad.south.edges.push({n: quad.south, d: 1, p: null});
+                    quad.north.edges.push({n: northQuad.north, d: 1, p: null});
+                }
+                if (j > 0 && nodes[j - 1] != null) {
+                    var westQuad:Quad = nodes[j - 1];
+                    westQuad.east.edges.push({n: quad.east, d: 1, p: null});
+                    quad.west.edges.push({n: westQuad.west, d: 1, p: null});
+                }
+
+                if (c == 'S')
+                    nodeHeap.push({n: quad.east, d: 0, p: null});
+
+                nodes[j] = quad;
+            }
+
+            nodeMap[i] = nodes;
+        }
+
+        var curr:Edge = null;
+
+        do {
+            curr = nodeHeap.pop();
+            for (e in curr.n.edges)
+                if (e.n.visitedAt < 0)
+                    nodeHeap.push({n: e.n, d: e.d + curr.d, p: curr});
+
+            var quad:Quad = nodeMap[curr.n.i][curr.n.j];
+            quad.north.visitedAt = curr.d;
+            quad.east.visitedAt = curr.d;
+            quad.south.visitedAt = curr.d;
+            quad.west.visitedAt = curr.d;
+        } while (!curr.n.terminal);
+
+        var pathDistance = curr.d;
+        var terminals = [];
+
+        // while (curr.d == pathDistance) {}
+        return curr.d;
     }
 }
 
 typedef Edge = {
     var n:Node;
     var p:Edge;
-    var d:Int64;
+    var d:Int;
 }
 
 class Node {
@@ -130,7 +194,7 @@ class Node {
     public final j:Int;
     public final edges:Array<Edge> = [];
     public final terminal:Bool;
-    public var visited = false;
+    public var visitedAt = -1;
 
     public function new(i, j, terminal:Bool = false) {
         this.i = i;
