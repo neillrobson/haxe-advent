@@ -115,11 +115,7 @@ class Day16 extends DayEngine {
                 if (e.n.visitedAt == 0x7FFFFFFF)
                     nodeHeap.push({n: e.n, d: e.d + curr.d, p: curr});
 
-            var quad:Quad = nodeMap[curr.n.i][curr.n.j];
-            quad.north.visitedAt = curr.d;
-            quad.east.visitedAt = curr.d;
-            quad.south.visitedAt = curr.d;
-            quad.west.visitedAt = curr.d;
+            curr.n.visitedAt = curr.d;
         } while (!curr.n.terminal);
 
         return curr.d;
@@ -176,30 +172,21 @@ class Day16 extends DayEngine {
 
         do {
             curr = nodeHeap.pop();
-            // Sys.println('${curr.n}: ${curr.d}');
             for (e in curr.n.edges)
                 if (e.n.visitedAt >= e.d + curr.d)
                     nodeHeap.push({n: e.n, d: e.d + curr.d, p: curr});
 
             curr.n.visitedAt = curr.d;
-            // var quad:Quad = nodeMap[curr.n.i][curr.n.j];
-            // quad.north.visitedAt = curr.d;
-            // quad.east.visitedAt = curr.d;
-            // quad.south.visitedAt = curr.d;
-            // quad.west.visitedAt = curr.d;
         } while (!curr.n.terminal);
 
         var pathDistance = curr.d;
         var terminals = [];
-
-        // Sys.println(curr.n);
 
         while (curr.d == pathDistance) {
             if (curr.n.terminal)
                 terminals.push(curr);
 
             curr = nodeHeap.pop();
-            // Sys.println(curr.n);
         }
 
         var visitedNodes = new HashSet<Vec2>();
@@ -211,8 +198,6 @@ class Day16 extends DayEngine {
                 at = at.p;
             }
         }
-
-        Sys.println(visitedNodes.length);
 
         return visitedNodes.length;
     }
