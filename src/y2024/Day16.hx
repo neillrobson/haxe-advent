@@ -116,6 +116,7 @@ class Day16 extends DayEngine {
                     nodeHeap.push({n: e.n, d: e.d + curr.d, p: curr});
 
             curr.n.visitedAt = curr.d;
+            curr.n.opposite.visitedAt = 0; // Prevent backtracking
         } while (!curr.n.terminal);
 
         return curr.d;
@@ -177,6 +178,7 @@ class Day16 extends DayEngine {
                     nodeHeap.push({n: e.n, d: e.d + curr.d, p: curr});
 
             curr.n.visitedAt = curr.d;
+            curr.n.opposite.visitedAt = 0; // Prevent backtracking
         } while (!curr.n.terminal);
 
         var pathDistance = curr.d;
@@ -214,6 +216,7 @@ class Node {
     public final j:Int;
     public final edges:Array<Edge> = [];
     public final terminal:Bool;
+    public var opposite:Node;
     public var visitedAt = 0x7FFFFFFF;
 
     public function new(i, j, terminal:Bool = false) {
@@ -273,15 +276,19 @@ function createNodeQuad(i, j, terminal:Bool):Quad {
 
     north.edges.push({n: east, d: 1000, p: null});
     north.edges.push({n: west, d: 1000, p: null});
+    north.opposite = south;
 
     east.edges.push({n: north, d: 1000, p: null});
     east.edges.push({n: south, d: 1000, p: null});
+    east.opposite = west;
 
     south.edges.push({n: east, d: 1000, p: null});
     south.edges.push({n: west, d: 1000, p: null});
+    south.opposite = north;
 
     west.edges.push({n: south, d: 1000, p: null});
     west.edges.push({n: north, d: 1000, p: null});
+    west.opposite = east;
 
     return Vector.fromArrayCopy([north, east, south, west]);
 }
