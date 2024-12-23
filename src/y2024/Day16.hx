@@ -100,7 +100,7 @@ class Day16 extends DayEngine {
         do {
             curr = nodeHeap.pop();
             for (e in curr.n.edges)
-                if (e.n.visitedAt < 0)
+                if (e.n.visitedAt == 0x7FFFFFFF)
                     nodeHeap.push({n: e.n, d: e.d + curr.d, p: curr});
 
             var quad:Quad = nodeMap[curr.n.i][curr.n.j];
@@ -165,7 +165,7 @@ class Day16 extends DayEngine {
         do {
             curr = nodeHeap.pop();
             for (e in curr.n.edges)
-                if (e.n.visitedAt < 0)
+                if (e.n.visitedAt >= e.d + curr.d)
                     nodeHeap.push({n: e.n, d: e.d + curr.d, p: curr});
 
             var quad:Quad = nodeMap[curr.n.i][curr.n.j];
@@ -179,6 +179,7 @@ class Day16 extends DayEngine {
         var terminals = [];
 
         // while (curr.d == pathDistance) {}
+
         return curr.d;
     }
 }
@@ -194,7 +195,7 @@ class Node {
     public final j:Int;
     public final edges:Array<Edge> = [];
     public final terminal:Bool;
-    public var visitedAt = -1;
+    public var visitedAt = 0x7FFFFFFF;
 
     public function new(i, j, terminal:Bool = false) {
         this.i = i;
