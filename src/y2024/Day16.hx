@@ -44,7 +44,7 @@ var test2 = "
 
 class Day16 extends DayEngine {
     public static function make(data:String) {
-        var tests:Array<TestData> = [{data: test1, expected: [7036i64]}, {data: test2, expected: [11048i64]}];
+        var tests:Array<TestData> = [{data: test1, expected: [7036i64, 45]}, {data: test2, expected: [11048i64, 64]}];
 
         new Day16(data, tests, true);
     }
@@ -78,17 +78,17 @@ class Day16 extends DayEngine {
 
                 if (i > 0 && nodeMap[i - 1][j] != null) {
                     var northQuad:Quad = nodeMap[i - 1][j];
-                    northQuad.south.edges.push({n: quad.south, d: 1});
-                    quad.north.edges.push({n: northQuad.north, d: 1});
+                    northQuad.south.edges.push({n: quad.south, d: 1, p: null});
+                    quad.north.edges.push({n: northQuad.north, d: 1, p: null});
                 }
                 if (j > 0 && nodes[j - 1] != null) {
                     var westQuad:Quad = nodes[j - 1];
-                    westQuad.east.edges.push({n: quad.east, d: 1});
-                    quad.west.edges.push({n: westQuad.west, d: 1});
+                    westQuad.east.edges.push({n: quad.east, d: 1, p: null});
+                    quad.west.edges.push({n: westQuad.west, d: 1, p: null});
                 }
 
                 if (c == 'S')
-                    nodeHeap.push({n: quad.east, d: 0});
+                    nodeHeap.push({n: quad.east, d: 0, p: null});
 
                 nodes[j] = quad;
             }
@@ -102,7 +102,7 @@ class Day16 extends DayEngine {
             curr = nodeHeap.pop();
             for (e in curr.n.edges)
                 if (!e.n.visited)
-                    nodeHeap.push({n: e.n, d: e.d + curr.d});
+                    nodeHeap.push({n: e.n, d: e.d + curr.d, p: curr});
 
             var quad:Quad = nodeMap[curr.n.i][curr.n.j];
             quad.north.visited = true;
@@ -121,6 +121,7 @@ class Day16 extends DayEngine {
 
 typedef Edge = {
     var n:Node;
+    var p:Edge;
     var d:Int64;
 }
 
@@ -182,21 +183,21 @@ function createNodeQuad(i, j, terminal:Bool):Quad {
     var south = new Node(i, j, terminal);
     var west = new Node(i, j, terminal);
 
-    north.edges.push({n: east, d: 1000});
-    north.edges.push({n: south, d: 1000});
-    north.edges.push({n: west, d: 1000});
+    north.edges.push({n: east, d: 1000, p: null});
+    north.edges.push({n: south, d: 1000, p: null});
+    north.edges.push({n: west, d: 1000, p: null});
 
-    east.edges.push({n: north, d: 1000});
-    east.edges.push({n: south, d: 1000});
-    east.edges.push({n: west, d: 1000});
+    east.edges.push({n: north, d: 1000, p: null});
+    east.edges.push({n: south, d: 1000, p: null});
+    east.edges.push({n: west, d: 1000, p: null});
 
-    south.edges.push({n: east, d: 1000});
-    south.edges.push({n: north, d: 1000});
-    south.edges.push({n: west, d: 1000});
+    south.edges.push({n: east, d: 1000, p: null});
+    south.edges.push({n: north, d: 1000, p: null});
+    south.edges.push({n: west, d: 1000, p: null});
 
-    west.edges.push({n: east, d: 1000});
-    west.edges.push({n: south, d: 1000});
-    west.edges.push({n: north, d: 1000});
+    west.edges.push({n: east, d: 1000, p: null});
+    west.edges.push({n: south, d: 1000, p: null});
+    west.edges.push({n: north, d: 1000, p: null});
 
     return Vector.fromArrayCopy([north, east, south, west]);
 }
