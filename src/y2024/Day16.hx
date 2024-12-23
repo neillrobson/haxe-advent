@@ -57,7 +57,7 @@ class Day16 extends DayEngine {
             {data: test3, expected: [2006, 10]}
         ];
 
-        new Day16(data, tests, false);
+        new Day16(data, tests, true);
     }
 
     function problem1(data:String):Any {
