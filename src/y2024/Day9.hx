@@ -147,7 +147,7 @@ class Day9 extends DayEngine {
             var leftmostHeap:Heap<Node<Pair>> = null;
             for (w in width...10) {
                 var heap = leftmostSpaces[w - 1];
-                if (heap.length() > 0) {
+                if (heap.length > 0) {
                     var node = heap.peek();
                     if (node.item[0] > current.item[0])
                         continue;

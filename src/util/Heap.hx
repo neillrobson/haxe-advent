@@ -4,6 +4,8 @@ class Heap<T> {
     var data:Array<T> = [];
     var comparator:T->T->Int;
 
+    public var length(get, never):Int;
+
     public function new(comparator) {
         this.comparator = comparator;
     }
@@ -59,7 +61,7 @@ class Heap<T> {
         return data[0];
     }
 
-    public function length():Int {
+    public function get_length():Int {
         return data.length;
     }
 

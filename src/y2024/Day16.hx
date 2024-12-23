@@ -85,7 +85,17 @@ class Day16 extends DayEngine {
             nodeMap[i] = nodes;
         }
 
-        return null;
+        var curr:Edge = null;
+
+        do {
+            curr = nodeHeap.pop();
+            curr.n.visited = true;
+            for (e in curr.n.edges)
+                if (!e.n.visited)
+                    nodeHeap.push({n: e.n, d: e.d + curr.d});
+        } while (!curr.n.terminal);
+
+        return curr.d;
     }
 
     function problem2(data:String):Dynamic {
@@ -101,6 +111,7 @@ typedef Edge = {
 class Node {
     public final edges:Array<Edge> = [];
     public final terminal:Bool;
+    public var visited = false;
 
     public function new(terminal:Bool = false) {
         this.terminal = terminal;
