@@ -2,7 +2,9 @@ package y2024;
 
 import DayEngine.TestData;
 import haxe.ds.Vector;
+import util.HashSet;
 import util.Heap;
+import util.Vec2;
 
 using StringTools;
 
@@ -40,12 +42,22 @@ var test2 = "
 #.#.#.#########.#
 #S#.............#
 #################";
+var test3 = "
+#####
+#...E
+#.#.#
+S...#
+#####";
 
 class Day16 extends DayEngine {
     public static function make(data:String) {
-        var tests:Array<TestData> = [{data: test1, expected: [7036, 45]}, {data: test2, expected: [11048, 64]}];
+        var tests:Array<TestData> = [
+            {data: test1, expected: [7036, 45]},
+            {data: test2, expected: [11048, 64]},
+            {data: test3, expected: [2006, 10]}
+        ];
 
-        new Day16(data, tests, true);
+        new Day16(data, tests, false);
     }
 
     function problem1(data:String):Any {
@@ -164,23 +176,45 @@ class Day16 extends DayEngine {
 
         do {
             curr = nodeHeap.pop();
+            // Sys.println('${curr.n}: ${curr.d}');
             for (e in curr.n.edges)
                 if (e.n.visitedAt >= e.d + curr.d)
                     nodeHeap.push({n: e.n, d: e.d + curr.d, p: curr});
 
-            var quad:Quad = nodeMap[curr.n.i][curr.n.j];
-            quad.north.visitedAt = curr.d;
-            quad.east.visitedAt = curr.d;
-            quad.south.visitedAt = curr.d;
-            quad.west.visitedAt = curr.d;
+            curr.n.visitedAt = curr.d;
+            // var quad:Quad = nodeMap[curr.n.i][curr.n.j];
+            // quad.north.visitedAt = curr.d;
+            // quad.east.visitedAt = curr.d;
+            // quad.south.visitedAt = curr.d;
+            // quad.west.visitedAt = curr.d;
         } while (!curr.n.terminal);
 
         var pathDistance = curr.d;
         var terminals = [];
 
-        // while (curr.d == pathDistance) {}
+        // Sys.println(curr.n);
 
-        return curr.d;
+        while (curr.d == pathDistance) {
+            if (curr.n.terminal)
+                terminals.push(curr);
+
+            curr = nodeHeap.pop();
+            // Sys.println(curr.n);
+        }
+
+        var visitedNodes = new HashSet<Vec2>();
+
+        for (term in terminals) {
+            var at = term;
+            while (at != null) {
+                visitedNodes.set([at.n.j, at.n.i]);
+                at = at.p;
+            }
+        }
+
+        Sys.println(visitedNodes.length);
+
+        return visitedNodes.length;
     }
 }
 
@@ -201,6 +235,10 @@ class Node {
         this.i = i;
         this.j = j;
         this.terminal = terminal;
+    }
+
+    public function toString() {
+        return '<$i $j> ($visitedAt)';
     }
 }
 
@@ -249,18 +287,14 @@ function createNodeQuad(i, j, terminal:Bool):Quad {
     var west = new Node(i, j, terminal);
 
     north.edges.push({n: east, d: 1000, p: null});
-    north.edges.push({n: south, d: 1000, p: null});
     north.edges.push({n: west, d: 1000, p: null});
 
     east.edges.push({n: north, d: 1000, p: null});
     east.edges.push({n: south, d: 1000, p: null});
-    east.edges.push({n: west, d: 1000, p: null});
 
     south.edges.push({n: east, d: 1000, p: null});
-    south.edges.push({n: north, d: 1000, p: null});
     south.edges.push({n: west, d: 1000, p: null});
 
-    west.edges.push({n: east, d: 1000, p: null});
     west.edges.push({n: south, d: 1000, p: null});
     west.edges.push({n: north, d: 1000, p: null});
 
