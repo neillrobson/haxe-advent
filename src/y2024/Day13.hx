@@ -36,9 +36,9 @@ Prize: X=80, Y=160";
 class Day13 extends DayEngine {
     public static function make(data:String) {
         var tests:Array<TestData> = [
-            {data: testData, expected: ["480"]},
-            {data: noSolution, expected: ["0"]},
-            {data: manySolutions, expected: ["16"]},
+            {data: testData, expected: [480]},
+            {data: noSolution, expected: [0]},
+            {data: manySolutions, expected: [16]},
         ];
 
         var inconsistent = Vector.fromArrayCopy([
@@ -120,7 +120,7 @@ class Day13 extends DayEngine {
             return s + ab.a * 3 + ab.b;
         }, 0);
 
-        return sum.toStr();
+        return sum;
     }
 
     function problem2(data:String):Any {
@@ -163,7 +163,7 @@ class Day13 extends DayEngine {
             return s + ab.a * 3 + ab.b;
         }, 0);
 
-        return sum.toStr();
+        return sum;
     }
 }
 

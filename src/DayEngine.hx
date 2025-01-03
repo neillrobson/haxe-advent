@@ -27,8 +27,15 @@ abstract class DayEngine {
                         var result = problem(test.data);
                         var expected = test.expected[x];
 
-                        if (result.isInt64() && expected.isInt64() && (result : Int64) == (expected : Int64)) {
-                            Sys.print("✅");
+                        if (result.isInt64() || expected.isInt64()) {
+                            var eInt64:Int64 = Std.isOfType(expected, Int) ? Int64.ofInt(cast expected) : cast expected;
+                            var aInt64:Int64 = Std.isOfType(result, Int) ? Int64.ofInt(cast result) : cast result;
+
+                            if (aInt64 == eInt64) {
+                                Sys.print("✅");
+                            } else {
+                                Sys.print("❌");
+                            }
                         } else if (result == expected) {
                             Sys.print("✅");
                         } else {
